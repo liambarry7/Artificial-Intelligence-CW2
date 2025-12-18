@@ -11,13 +11,14 @@ Includes a State class for Task 1
 """
 
 '''
+    NOTE - DO NOT STORE DATASET WITHIN THIS REPO OTHERWISE WE'LL BE PENIALISED
+         - STORE LOCALLY AND READ FROM YOUR OWN FILES
+    
+    
     TO DO:
-        PART 1
-        Data collection - individual
-        
-        
         PART 2A
         - Google MediaPipe for image feature extraction and data labelling
+        - Useful link/documentation for mediapipe: https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/python
         
         PART 2B
         Pre-proccessing of dataset
@@ -55,6 +56,9 @@ Includes a State class for Task 1
         
         PART 3
         Individual written report
+        
+        
+        
 '''
 
 print("Hello World!")
