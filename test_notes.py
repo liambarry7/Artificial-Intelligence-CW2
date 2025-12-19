@@ -169,11 +169,7 @@ hands = []
 #
 # print(hand_count)
 # # print(hands)
-#
-# import pandas as pd
-# df = pd.DataFrame(hands)
-# print(df.head(1))
-# print(df.columns)
+
 
 
 landmarker.close()
