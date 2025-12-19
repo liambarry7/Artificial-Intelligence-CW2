@@ -19,6 +19,7 @@ Includes a State class for Task 1
         PART 2A
         - Google MediaPipe for image feature extraction and data labelling
         - Useful link/documentation for mediapipe: https://ai.google.dev/edge/mediapipe/solutions/vision/hand_landmarker/python
+        - python -m pip install mediapipe
         
         PART 2B
         Pre-proccessing of dataset
@@ -61,8 +62,119 @@ Includes a State class for Task 1
         
 '''
 
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+
+
+
+print(mp.__version__)
+
 print("Hello World!")
-        
-        
-        
-        
+test_img_path = r"D:\kimia\Documents\University\UEA\AI\cw2_ds\CW2_dataset_final\A\A_sample_1.jpg"
+
+model_path = "HandModel/hand_landmarker.task"
+# model_path = r"HandModel\hand_landmarker.task"
+
+
+BaseOptions = python.BaseOptions
+HandLandmarker = vision.HandLandmarker
+HandLandmarkerOptions = vision.HandLandmarkerOptions
+VisionRunningMode = vision.RunningMode
+
+# Create a hand landmarker instance with the image mode:
+options = HandLandmarkerOptions(
+    base_options=BaseOptions(model_asset_path=model_path),
+    running_mode=VisionRunningMode.IMAGE)
+
+landmarker = HandLandmarker.create_from_options(options)
+
+# Load the input image from an image file.
+mp_image = mp.Image.create_from_file(test_img_path)
+
+# Detect hand landmarks from the input image
+hand_landmarker_result = landmarker.detect(mp_image)
+
+print(hand_landmarker_result)
+print(type(hand_landmarker_result))
+print(f"handness: {hand_landmarker_result.handedness}")
+print(f"hand landmarks: {hand_landmarker_result.hand_landmarks[0]}")
+print(f"x coord:{hand_landmarker_result.hand_landmarks[0][0].x}") # from results, get first hand ( [0] ), from first hand, get first point (wrist - [0]), get x coord of that point
+# print(hand_landmarker_result.hand_landmarks[1])) # gets second hand (if applicable)
+print(f"no of landmarks:{len(hand_landmarker_result.hand_landmarks[0])}") # there are 21 hand landmarks
+print(f"hand world landmarks: {hand_landmarker_result.hand_world_landmarks[0]}")
+print(f"world landmarks len: {len(hand_landmarker_result.hand_world_landmarks[0])}")
+
+if hand_landmarker_result.hand_landmarks:
+    hand1 = hand_landmarker_result.hand_landmarks[0]
+    print(f"Wrist coordinates X:{hand1[0].x} Y:{hand1[0].y} Z:{hand1[0].z} Visibility:{hand1[0].visibility}")
+else:
+    print("No hand detected in the image. Check lighting or hand visibility.")
+
+# create a csv file
+# right into csv file each img attributes from dict
+# read csv file into a df
+# columns: index (id), hand(l/r), hand score(likehood of it being that hand), hand landmark points(point 0 - x,y,z)
+# i=0
+handness = hand_landmarker_result.handedness[0][0]
+dict = {"HandID": 0, "Index": handness.index, "Score": handness.score, "Display_name": handness.display_name, "Category_name": handness.category_name}
+print(dict)
+
+# add all attributes to dictionary
+for i in range(len(hand_landmarker_result.hand_landmarks[0])):
+    hand_landmark = hand_landmarker_result.hand_landmarks[0][i]
+    dict[f"hand_landmark_{i}"] = [hand_landmark.x, hand_landmark.y, hand_landmark.z, hand_landmark.visibility, hand_landmark.presence, hand_landmark.name]
+    world_landmark = hand_landmarker_result.hand_world_landmarks[0][i]
+    dict[f"world_hand_landmark_{i}"] = [world_landmark.x, world_landmark.y, world_landmark.z, world_landmark.visibility, world_landmark.presence, world_landmark.name]
+
+dict["Hand_sign"] = "A" # img / letter
+
+print(dict)
+
+
+import os
+ds_location = r"D:\kimia\Documents\University\UEA\AI\cw2_ds\CW2_dataset_final"
+hand_count = 0
+hands = []
+
+# loop through dataset folders
+# for folder in os.listdir(ds_location):
+#     if folder != ".DS_Store": #ignore .ds_store file
+#         file_pathx = os.path.join(ds_location, folder)
+#         print(file_pathx)
+#
+#         # for each image in folder
+#         for img in os.listdir(file_pathx):
+#             file_path = os.path.join(file_pathx, img)
+#             if os.path.isfile(file_path):
+#                 print(img, file_path)
+#
+#                 mp_image = mp.Image.create_from_file(file_path)
+#
+#                 hand_landmarker_result = landmarker.detect(mp_image)
+#
+#                 # print(hand_landmarker_result)
+#
+#                 if hand_landmarker_result.hand_landmarks:
+#                     hand1 = hand_landmarker_result.hand_landmarks[0]
+#                     print(
+#                         f"Wrist coordinates X:{hand1[0].x} Y:{hand1[0].y} Z:{hand1[0].z} Visibility:{hand1[0].visibility}")
+#                 else:
+#                     print("No hand detected in the image.")
+#
+#                 hand_count+=1
+#                 hands.append(hand_landmarker_result)
+#                 break
+#
+#
+# print(hand_count)
+# # print(hands)
+#
+# import pandas as pd
+# df = pd.DataFrame(hands)
+# print(df.head(1))
+# print(df.columns)
+
+
+landmarker.close()
+print("2")
