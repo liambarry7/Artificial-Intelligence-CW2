@@ -164,7 +164,7 @@ hands = []
 #
 #                 hand_count+=1
 #                 hands.append(hand_landmarker_result)
-#                 break
+#
 #
 #
 # print(hand_count)
@@ -178,3 +178,7 @@ hands = []
 
 landmarker.close()
 print("2")
+
+import pandas as pd
+df = pd.read_csv("hands.csv")
+print(df.head())
