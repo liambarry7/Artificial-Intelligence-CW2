@@ -94,12 +94,7 @@ def preprocess():
     print(f"Count of hand (encoded) signs: {hand_df.groupby(['Hand_sign', 'Encoded_sign']).size().reset_index(name='Count')}")
 
     # data normalisation
-    '''What needs to be normalised
-    - Score is already between 0.5 and 1
-    - should we mess with landmark scores?'''
-    print(f"Score max: {hand_df['Score'].max()}\nScore min: {hand_df['Score'].min()}")
-
-
+    print(f"Hand score max: {hand_df['Score'].max()}\nHand score min: {hand_df['Score'].min()}") # dont think this needs/should be normalised
 
     # for each landmark, get mean and sd of all X points
     # calculate z-score of each X point of each lankmark for each row
@@ -107,22 +102,15 @@ def preprocess():
     hand_df_standardised = hand_df[['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign']].copy()
 
     for i in range(21):
-        # z-score = (data - population mean) / population sd
-        print(f"landmark{i+1} total : {hand_df[f'Hand_landmark_X{i+1}'].sum()}")
-        print(f"landmark{i+1} mean : {np.mean(hand_df[f'Hand_landmark_X{i+1}'])}")
-        print(f"landmark{i+1} std : {np.std(hand_df[f'Hand_landmark_X{i+1}'])}")
+        for axis in ['X', 'Y', 'Z']:
+            print(f"landmark{i+1} total : {hand_df[f'Hand_landmark_X{i+1}'].sum()}")
+            print(f"landmark{i+1} mean : {np.mean(hand_df[f'Hand_landmark_X{i+1}'])}")
+            print(f"landmark{i+1} std : {np.std(hand_df[f'Hand_landmark_X{i+1}'])}")
 
-        landmark_Xi_m = np.mean(hand_df[f'Hand_landmark_X{i+1}'])
-        landmark_Yi_m = np.mean(hand_df[f'Hand_landmark_Y{i+1}'])
-        landmark_Zi_m = np.mean(hand_df[f'Hand_landmark_Z{i+1}'])
-        landmark_Xi_std = np.std(hand_df[f'Hand_landmark_X{i+1}'])
-        landmark_Yi_std = np.std(hand_df[f'Hand_landmark_Y{i+1}'])
-        landmark_Zi_std = np.std(hand_df[f'Hand_landmark_Z{i+1}'])
-
-        hand_df_standardised[f'Hand_landmark_X{i+1}_standard_units'] = (hand_df[f'Hand_landmark_X{i+1}'] - landmark_Xi_m) / landmark_Xi_std
-        hand_df_standardised[f'Hand_landmark_Y{i+1}_standard_units'] = (hand_df[f'Hand_landmark_Y{i+1}'] - landmark_Yi_m) / landmark_Yi_std
-        hand_df_standardised[f'Hand_landmark_Z{i+1}_standard_units'] = (hand_df[f'Hand_landmark_Z{i+1}'] - landmark_Zi_m) / landmark_Zi_std
-
+            hand_df_standardised[f'Hand_landmark_{axis}{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_{axis}{i + 1}'])
+            # hand_df_standardised[f'Hand_landmark_X{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_X{i + 1}'])
+            # hand_df_standardised[f'Hand_landmark_Y{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_Y{i + 1}'])
+            # hand_df_standardised[f'Hand_landmark_Z{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_Z{i + 1}'])
 
     # hand_df_standardised[['Hand_sign', 'Encoded_sign']] = hand_df[['Hand_sign', 'Encoded_sign']].copy()
     print(f"Standardised df columns: {hand_df_standardised.columns}")
@@ -133,6 +121,13 @@ def preprocess():
     # outlier removal
 
 
+def z_score(column):
+    # z-score = (data - population mean) / population sd
+    landmark_m = np.mean(column)
+    landmark_std = np.std(column)
+    return (column - landmark_m) / landmark_std
+
+
 
 
 
@@ -140,7 +135,6 @@ def visualise(chart_type, x, y):
     print(chart_type)
     match(chart_type):
         case "bar":
-
             x = np.array(x)
             y = np.array(y)
             plt.bar(x, y)
