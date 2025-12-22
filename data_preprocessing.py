@@ -32,31 +32,22 @@ def preprocess():
 
     # print(df.columns)
     # 'HandID', 'Index', 'Score', 'Display_name', 'Category_name', 'hand_landmark_1'
-    # ...'hand_landmark_21, 'world_hand_landmark_1', ... 'world_hand_landmark_21',
-    # 'Hand_sign'
+    # ...'hand_landmark_21, 'Hand_sign'
 
     print(f"Hands r/l: \n{df['Category_name'].unique()}")
     print(f"no of signs: \n{df['Hand_sign'].unique()}")
-
     print(f"hand name and indexes: \n{df[df['Index']==1]['Category_name'].head()}")
 
-    # print(f"No of r/l hands: {df.groupby('Category_name')['Category_name'].count()}")
-    # print(f"no of diff signs: {df.groupby('Hand_sign')['Hand_sign'].count()}")
-    # print(f"second row of df: {df.iloc[1]}")
-    #
-    # hand_count = df.groupby('Category_name').size().reset_index(name="count")
-    # print(type(hand_count))
-    # print(hand_count)
-    #
-    #
-    # hand_countX = hand_count['Category_name'].to_numpy()
-    # hand_countY = hand_count['count'].to_numpy()
-    # visualise("bar", hand_countX, hand_countY)
-    #
-    # sign_count = df.groupby('Hand_sign').size().reset_index(name="count")
-    # signX = sign_count['Hand_sign'].to_numpy()
-    # signY = sign_count['count'].to_numpy()
-    # visualise("bar", signX, signY)
+    # Visualise initial hand and sign count statistics
+    hand_count = df.groupby('Category_name').size().reset_index(name="count")
+    hand_countX = hand_count['Category_name'].to_numpy()
+    hand_countY = hand_count['count'].to_numpy()
+    visualise("bar", hand_countX, hand_countY)
+
+    sign_count = df.groupby('Hand_sign').size().reset_index(name="count")
+    signX = sign_count['Hand_sign'].to_numpy()
+    signY = sign_count['count'].to_numpy()
+    visualise("bar", signX, signY)
 
 
 
@@ -119,6 +110,39 @@ def preprocess():
 
 
     # outlier removal
+    # zscores - check within x standard deviations
+    # calculate z score for each points - already done in data standardisation
+    # if z score of any point in img is outside x sd, remove that img/row
+
+    threshold = 3
+    for i in range(21):
+        outliers_X = hand_df_standardised[hand_df_standardised[f'Hand_landmark_X{i + 1}_standard_units'].abs() > 3]
+        outliers_Y = hand_df_standardised[hand_df_standardised[f'Hand_landmark_Y{i + 1}_standard_units'].abs() > 3]
+        outliers_Z = hand_df_standardised[hand_df_standardised[f'Hand_landmark_Z{i + 1}_standard_units'].abs() > 3]
+        outliers = pd.concat([outliers_X, outliers_Y], axis=0)
+        outliers = pd.concat([outliers, outliers_Z], axis=0)
+
+    print(f"outliers X: {outliers_X}")
+    print(f"outliers Y: {outliers_Y}")
+    print(f"outliers Z: {outliers_Z}")
+    print(f"outliers: {outliers.head()}")
+
+    # drop outliers by matching ids from outlier df
+    # outlier_handID = outliers['HandID'].to_numpy()
+    # print(outlier_handID)
+    # for id in outlier_handID:
+    #     hand_df_standardised.drop(hand_df_standardised[hand_df_standardised['HandID'] == id].index)
+    #
+    #
+    #
+    # hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
+    # print(hand_df_std)
+
+
+
+
+    # hand_df_standardised.to_csv('test.csv', mode='w', index=False)
+
 
 
 def z_score(column):
