@@ -15,6 +15,10 @@ import matplotlib.pyplot as plt
 
 
 def preprocess():
+    """
+    :return: a dataframe of cleaned hand data
+    """
+
     # read csv file as df
     # remove noise
     # remove unneeded columns/rename columns if needed
@@ -134,15 +138,15 @@ def preprocess():
     #     hand_df_standardised.drop(hand_df_standardised[hand_df_standardised['HandID'] == id].index)
     #
     #
-    #
-    # hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
-    # print(hand_df_std)
+    # re-work this
+    hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
+    print(hand_df_std)
 
 
 
 
     # hand_df_standardised.to_csv('test.csv', mode='w', index=False)
-
+    return hand_df_std
 
 
 def z_score(column):
