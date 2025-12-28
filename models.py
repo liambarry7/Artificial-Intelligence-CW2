@@ -11,8 +11,13 @@ Script containing different classification models
 """
 
 from collections import Counter
+import sklearn.tree as tree
+import sklearn.metrics as metrics
 import math
 import pandas as pd
+import numpy as np
+
+from data_preprocessing import preprocess
 
 
 #Chris
@@ -152,8 +157,46 @@ def kNN(dataset_df, input_vector, k):
 
 #kNN end
 
-def decision_tree():
-    print("decision tree")
+def decision_tree_create(inputData, trainingData, SEED):
+    '''
+    Creates a decision tree based on the data given
+    
+    --------
+    inputs:
+        inputData: data for each point in the data set
+        
+        trainingData: what sign each point in the input data is
+        
+        SEED: number to randomize the decision tree
+        
+    --------
+    
+    returns: decision tree as a sklearn tree
+    '''
+    dtree = tree.DecisionTreeClassifier(random_state=SEED)
+    
+    dtree.fit(inputData, trainingData)
+    
+    tree.plot_tree(dtree, node_ids=True)
+    
+    return dtree
+    
+def decision_tree_decision(dTree, item):
+    '''
+    Takes a set of data points and a tree to return what each data point is assigned to
+    
+    ------
+    inputs:
+        dTree: the decision tree
+        
+        item: the data points to compare
+        
+    ------
+    returns: an array of what sign each given data point is 
+    '''
+    prediction = dTree.predict(item)
+    
+    return prediction
 
 
 
@@ -184,6 +227,30 @@ def test_harness():
     kNN(testSet, testVector, 5)
     #test decision tree
     #test ... (our 3rd choice)
+    
+    print(df_raw.to_numpy())
+    
+    X = df_raw.drop(['Hand_sign'], axis=1)
+    X = X.drop(['Category_name', 'Display_name'], axis=1).to_numpy()
+    print(X)
+    y = df_raw['Hand_sign'].to_numpy()
+    print(y)
+    
+    decisionTree = decision_tree_create(X, y, 7107)
+    
+    correct = 0;
+    length = None;
+    
+    pred = decision_tree_decision(decisionTree, X)
+    
+    print(pred)
+    
+    for i in range(len(pred)):
+        if(pred[i] == y[i]):
+            correct += 1
+            length = i
+    
+    print(str(correct) + '/' + str(length))
 
 if __name__ == '__main__':
     test_harness()
