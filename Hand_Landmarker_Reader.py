@@ -32,7 +32,11 @@ def data_extraction():
 
     landmarker = HandLandmarker.create_from_options(options)
 
-    ds_location = r"D:\kimia\Documents\University\UEA\AI\cw2_ds\CW2_dataset_final"
+    #Liam's location:
+    #ds_location = r"D:\kimia\Documents\University\UEA\AI\cw2_ds\CW2_dataset_final"
+    #Chris's location:
+    ds_location = r"C:\Users\chris\Desktop\AI_CW2\CW2_dataset_final"
+
     hand_count = 0
     hands = []
 
