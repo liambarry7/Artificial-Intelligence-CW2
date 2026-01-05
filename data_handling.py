@@ -12,23 +12,18 @@ Script containing functions to preprocess the dataset
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
 
 
 def preprocess():
     """
-    :return: a dataframe of cleaned hand data
-    """
+       Preprocesses the csv hand data in preparation for classification models by removing noise, refactoring columns,
+       data encoding, data normalisation (z-scores) and outlier removal.
 
-    # read csv file as df
-    # remove noise
-    # remove unneeded columns/rename columns if needed
-
-    # data encoding
-    # data normalisation (z-scores)
-    # outlier removal
-
-    # sample
-    # split into test and train harness
+       ------
+       returns:
+            returns a standardised dataset of hand landmark data ready for split into training/test sets
+       """
 
     df = pd.read_csv("hands.csv")
     print(df.head())
@@ -93,7 +88,6 @@ def preprocess():
 
     # for each landmark, get mean and sd of all X points
     # calculate z-score of each X point of each lankmark for each row
-    # hand_df_standardised = hand_df[['HandID', 'Score', 'Hand_class']].copy()
     hand_df_standardised = hand_df[['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign']].copy()
 
     for i in range(21):
@@ -132,30 +126,46 @@ def preprocess():
     print(f"outliers: {outliers.head()}")
 
     # drop outliers by matching ids from outlier df
-    # outlier_handID = outliers['HandID'].to_numpy()
-    # print(outlier_handID)
-    # for id in outlier_handID:
-    #     hand_df_standardised.drop(hand_df_standardised[hand_df_standardised['HandID'] == id].index)
-    #
-    #
+    outlier_handID = outliers['HandID'].to_numpy()
+
     # re-work this
     hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
     print(hand_df_std)
-
-
-
 
     # hand_df_standardised.to_csv('test.csv', mode='w', index=False)
     return hand_df_std
 
 
 def z_score(column):
+    """
+       used to calculate the Z-score of a hand landmark point
+
+       ------
+       inputs:
+           column: a dataframe column that contains landmark values
+
+       ------
+       returns: a dataframe column with all items/rows standardised using z-scores
+       """
     # z-score = (data - population mean) / population sd
     landmark_m = np.mean(column)
     landmark_std = np.std(column)
     return (column - landmark_m) / landmark_std
 
+def dataset_split():
+    """
+       Used to split the standardised dataframe of hand landmarks into a training and test dataset,
+       ready for use in models
 
+       ------
+       returns: returns two arrays of training data and test data
+       """
+    print("Split dataset to test, training")
+    df = preprocess()
+    training_set, test_set = train_test_split(df, random_state=41, test_size=0.2)
+    print(training_set.shape, test_set.shape)
+
+    return training_set, test_set
 
 
 
@@ -172,6 +182,7 @@ def visualise(chart_type, x, y):
 def test_harness():
     print("test test test")
     preprocess()
+    dataset_split()
 
 if __name__ == '__main__':
     # data_extraction()

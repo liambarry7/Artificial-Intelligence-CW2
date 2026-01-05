@@ -13,11 +13,13 @@ Script containing different classification models
 from collections import Counter
 import sklearn.tree as tree
 import sklearn.metrics as metrics
+from sklearn.neural_network import MLPClassifier
 import math
 import pandas as pd
 import numpy as np
 
-from data_preprocessing import preprocess
+from data_handling import preprocess
+from data_handling import dataset_split
 
 
 #Chris
@@ -199,10 +201,56 @@ def decision_tree_decision(dTree, item):
     return prediction
 
 
+def multilayer_perceptron(training_data, test_data):
+    """
+    Creates a multilayer perceptron to classifier, which is used to test the training data
+
+    ------
+    inputs:
+        training_data: a dataframe consisting of data that is used to train the model
+
+        test_data: a dataframe consisting of data that is used to test the odel
+
+    ------
+    returns: n/a
+    """
+    # https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/
+    # https://www.geeksforgeeks.org/machine-learning/classification-using-sklearn-multi-layer-perceptron/
+
+    # split training dataframes into x (coords) and y (features) elements, and turn into numpy arrays for model
+    x_train = training_data.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
+    y_train = training_data['Encoded_sign'].to_numpy()
+    x_test = test_data.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign'], axis=1).to_numpy()
+    y_test = test_data['Encoded_sign'].to_numpy()
+
+    print(f"x: {x_train[0]}")
+
+    # create a MLP model; 2 hidden layers (64 and 32 neurons each), max epochs (1000) to train
+    # random state (41) to set a fixed seed for initialising weights
+    mlp = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=1000, random_state=41)
+
+    # train MLP model
+    mlp.fit(x_train, y_train)
+
+    # use trained MLP to make predictions on test data
+    y_pred = mlp.predict(x_test)
+    print(y_pred)
+
+    # Example of testing a singular row for classification
+    # t_x = test_data.iloc[100]
+    # print(t_x)
+    # tt_x = t_x.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign']).to_numpy()
+    # tt_xr = tt_x.reshape(1, -1)
+    # print(mlp.predict(tt_xr))
+
+
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    print(f"Accuracy: {accuracy * 100:.2f}%")
+
 
 #Test harness
 #(Will probably neec redoing when training/test set split established)
-def test_harness():
+def test_harness_v1():
     print("test test test")
 
     #get dataset from csv 
@@ -252,5 +300,18 @@ def test_harness():
     
     print(str(correct) + '/' + str(length))
 
+def test_harness_v2():
+    # Get training and test data
+    training_set, test_set = dataset_split()
+
+    # test run kNN
+
+    # test run decision tree
+
+
+    # Test run MLP
+    multilayer_perceptron(training_set, test_set)
+
+
 if __name__ == '__main__':
-    test_harness()
+    test_harness_v2()
