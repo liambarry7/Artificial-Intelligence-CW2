@@ -185,5 +185,4 @@ def test_harness():
     dataset_split()
 
 if __name__ == '__main__':
-    # data_extraction()
     test_harness()
