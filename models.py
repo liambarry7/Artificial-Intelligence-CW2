@@ -201,6 +201,7 @@ def decision_tree_decision(dTree, item):
 
 
 def multilayer_perceptron(training_data, test_data):
+    # ADD OPTIMAL PARAMETERS LIST PARAMETER FROM 5FOLD VALIDATION TESTS TO CREATE BEST MLP
     """
     Creates a multilayer perceptron to classifier, which is used to test the training data
 

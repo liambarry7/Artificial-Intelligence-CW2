@@ -41,12 +41,12 @@ def preprocess():
     hand_count = df.groupby('Category_name').size().reset_index(name="count")
     hand_countX = hand_count['Category_name'].to_numpy()
     hand_countY = hand_count['count'].to_numpy()
-    visualise("bar", hand_countX, hand_countY)
+    # visualise("bar", hand_countX, hand_countY)
 
     sign_count = df.groupby('Hand_sign').size().reset_index(name="count")
     signX = sign_count['Hand_sign'].to_numpy()
     signY = sign_count['count'].to_numpy()
-    visualise("bar", signX, signY)
+    # visualise("bar", signX, signY)
 
 
 
