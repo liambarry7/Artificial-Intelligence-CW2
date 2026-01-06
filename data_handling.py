@@ -131,9 +131,12 @@ def preprocess():
     # re-work this
     hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
     print(hand_df_std)
-
     # hand_df_standardised.to_csv('test.csv', mode='w', index=False)
-    return hand_df_std
+
+    clean_df = hand_df_std.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign'], axis=1)
+    print(clean_df)
+    # clean_df.to_csv('test.csv', mode='w', index=False)
+    return clean_df
 
 
 def z_score(column):
@@ -182,7 +185,7 @@ def visualise(chart_type, x, y):
 def test_harness():
     print("test test test")
     preprocess()
-    dataset_split()
+    # dataset_split()
 
 if __name__ == '__main__':
     test_harness()

@@ -17,6 +17,9 @@ from sklearn.model_selection import KFold, cross_val_score
 def test_model(model):
     print(model)
 
+    #https://www.geeksforgeeks.org/machine-learning/cross-validation-machine-learning/
+    #https://www.geeksforgeeks.org/machine-learning/k-fold-cross-validation-in-machine-learning/
+
     # split dataset into 5 fold
     ff = KFold(n_splits=5, shuffle=True, random_state=41)
 

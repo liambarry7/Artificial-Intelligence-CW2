@@ -338,7 +338,7 @@ def test_harness_v1():
 def test_harness_v2():
     # Get training and test data
     training_set, test_set = dataset_split()
-
+    print(f"Columns: {training_set.columns}")
     # test run kNN
 
     # test run decision tree
