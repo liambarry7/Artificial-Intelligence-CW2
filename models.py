@@ -103,7 +103,7 @@ def kNN_predict(dataset, input_vector, k):
 
     Returns
     -------
-    most_common_label : str
+    most_common_label : float
         The most commonly occuring label amongst nearest neighbours
     """
 
@@ -138,11 +138,11 @@ def kNN(dataset_df, input_vector, k):
     Returns
     -------
 
-    str
-        Handsign estimate as str - "A", "B", etc.
+    float
+        Handsign estimate as str - "A" = 0.0, "B" = 1.0, etc.
     """
 
-    print("kNN --> k = ", k)
+    #print("kNN --> k = ", k)
 
     #_df is the dataframe version of the dataset - needs to be converted to a list
     data = dataset_df.values.tolist()
@@ -150,8 +150,8 @@ def kNN(dataset_df, input_vector, k):
     #and added as a tuple
     dataset = []
     for row in data:
-        features = row[:-1]
-        label = row[-1]
+        label = row[0]
+        features = row[1:]
         dataset.append((features, label))
 
 
@@ -342,10 +342,21 @@ def test_harness_v2():
     # Get training and test data
     training_set, test_set = dataset_split()
     print(f"Columns: {training_set.columns}")
+
+
     # test run kNN
 
-    # test run decision tree
+    row = training_set.sample(n=1).iloc[0]
 
+    test_label = row["Encoded_sign"]
+    test_vector = row.drop("Encoded_sign").tolist()
+    k = 5
+
+    print(f"kNN test: \nk = {k} \ntest input = {test_label}")
+    print(kNN(training_set, test_vector, k))
+
+
+    # test run decision tree
 
     # Test run MLP
     mlp = multilayer_perceptron(training_set, test_set)
