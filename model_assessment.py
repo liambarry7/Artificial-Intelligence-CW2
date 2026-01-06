@@ -12,9 +12,19 @@ Script containing the analysis of different classification models
 
 from data_handling import dataset_split
 from models import *
-from sklearn.model_selection import KFold, cross_val_score
+from sklearn.model_selection import KFold, cross_val_score, GridSearchCV
 
 def test_model(model):
+    """
+        A function used to test specified models to get their best performing hyperparameters
+
+        ------
+        inputs:
+            model: name of the model that will be tested
+
+        ------
+        returns: n/a
+        """
     print(model)
 
     #https://www.geeksforgeeks.org/machine-learning/cross-validation-machine-learning/
@@ -36,6 +46,20 @@ def test_model(model):
             print("Model not available.")
 
 def mlp_fine_tuning(five_fold):
+    """
+        A function used to test MLPClassifiers using 5 fold cross validation to
+        find its best hyperparameters
+
+        ------
+        inputs:
+            five_fold: provides the train/test indices to split into 5 train/test sets
+
+            test_data: a dataframe consisting of data that is used to test the model
+
+        ------
+        returns: n/a
+        """
+
     # get training and test datasets
     training_set, test_set = dataset_split()
 
@@ -54,6 +78,42 @@ def mlp_fine_tuning(five_fold):
     print(f"Mean CV accuracy: {mean_cv}")
     print(f"Standard deviation: {std_cv}")
 
+    # hyperparameters to adjust:
+    # - epochs (iterations)
+    # - hidden layer sizes
+    # - activation function in hidden layer
+    # - learning rate
+    iterations = [500, 750, 1000, 1500] # default = 200, should be above small values like 200 to avoid convergence warning
+    hidden_layer_sizes = []
+    activation_funcs = ['identity', 'logistic', 'tanh', 'relu'] # default = relu
+    learning_rates = ['constant', 'invscaling', 'adaptive'] # default = constant
+
+    # for loop to test all combinations of hyperparameters
+    # --> look at using gridsearch https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
+    # https://drbeane.github.io/python_dsci/pages/grid_search.html
+    print(f"MLP Params : {mlp.get_params()}")
+
+    param_grid = [{
+        'activation': ['identity', 'logistic', 'tanh', 'relu'],
+        'learning_rate': ['constant', 'invscaling', 'adaptive'],
+        'max_iter': [500, 750, 1000, 1500] # 500 converges
+    }]
+
+    # mlp_gridsearch = GridSearchCV(mlp, param_grid, cv=five_fold, scoring='accuracy', refit=True) #param grid = list of dict of parameter settins to try as values
+
+    mlp_gridsearch = GridSearchCV(mlp, param_grid, cv=five_fold, scoring='accuracy', refit=True, n_jobs=-1, verbose=2)
+    # n_jobs = -1 : run on all available cores
+    # verbose = 2 : gives update each time fold finishes
+
+    mlp_gridsearch.fit(x_train, y_train)
+
+    print(mlp_gridsearch.best_params_)
+
+    cv_res = mlp_gridsearch.cv_results_
+    print(cv_res.keys())
+
+    # first results: {'activation': 'tanh', 'learning_rate': 'constant', 'max_iter': 500}
+    # second results: {'activation': 'tanh', 'learning_rate': 'constant', 'max_iter': 500}
 
 def test_harness():
     print("TO DO IN THIS SCRIPT:"
@@ -64,9 +124,9 @@ def test_harness():
           "\n - compare this to others for classifier performance comparison"
           "\n - create visuals of performance metrics etc"
           "\n\n Use this script to test each classifier to work out their best hyperparameters, then use the ones in "
-          "models to create a fine-tuned classifier"
-          "\n OR"
-          "\n Adapt model functions to first do 5fold tests, then use .fit to train on actual datasets etc like in labsheet ")
+          "models to create a fine-tuned classifier")
+          # "\n OR"
+          # "\n Adapt model functions to first do 5fold tests, then use .fit to train on actual datasets etc like in labsheet ")
 
 
     test_model("mlp")
