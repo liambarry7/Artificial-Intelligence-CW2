@@ -217,10 +217,10 @@ def multilayer_perceptron(training_data, test_data):
     # https://www.geeksforgeeks.org/machine-learning/classification-using-sklearn-multi-layer-perceptron/
 
     # split training dataframes into x (coords) and y (features) elements, and turn into numpy arrays for model
-    x_train = training_data.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
+    x_train = training_data.drop(['Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
     y_train = training_data['Encoded_sign'].to_numpy()
 
-    x_test = test_data.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign'], axis=1).to_numpy()
+    x_test = test_data.drop(['Encoded_sign'], axis=1).to_numpy()
     y_test = test_data['Encoded_sign'].to_numpy()
 
     print(f"x: {x_train[0]}")
@@ -264,7 +264,7 @@ def mlp_predict(mlp, test_data):
         """
 
     # split test dataframes into x (coords) and y (features) elements, and turn into numpy arrays for model
-    x_test = test_data.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign'], axis=1).to_numpy()
+    x_test = test_data.drop(['Encoded_sign'], axis=1).to_numpy()
     y_test = test_data['Encoded_sign'].to_numpy()
 
     # use trained MLP to make predictions on test data
@@ -273,14 +273,16 @@ def mlp_predict(mlp, test_data):
 
     # Example of testing a singular row for classification
     t_x = test_data.iloc[100]
-    print(t_x)
-    tt_x = t_x.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign']).to_numpy()
+    print(f"singular test data: {t_x}")
+    tt_x = t_x.drop(['Encoded_sign']).to_numpy()
     tt_xr = tt_x.reshape(1, -1)
-    print(mlp.predict(tt_xr))
+    idv_pred = mlp.predict(tt_xr)
+    print(f"Class prediction: {idv_pred}")
+    print(f"Actual class: {t_x['Encoded_sign']}")
 
     # calc accuracy
     accuracy = metrics.accuracy_score(y_test, y_pred)
-    print(f"Accuracy: {accuracy * 100:.2f}%")
+    print(f"Overall Accuracy: {accuracy * 100:.2f}%")
 
 
 #Test harness
