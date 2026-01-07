@@ -115,6 +115,25 @@ def mlp_fine_tuning(five_fold):
     # first results: {'activation': 'tanh', 'learning_rate': 'constant', 'max_iter': 500}
     # second results: {'activation': 'tanh', 'learning_rate': 'constant', 'max_iter': 500}
 
+def decision_tree_fine_tuning(ff):
+    
+    
+    #get appropriate data
+    training_data, test_data = dataset_split()
+
+    # split training set into x (landmarks) and y (labels)
+    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
+    y_train = training_set['Encoded_sign'].to_numpy()
+    
+    #create decision tree
+    dtree = decision_tree_create(x_train, y_train, 2072)
+    
+    #evaluated method using 5-fold cv
+   
+    
+    
+    
+
 def test_harness():
     print("TO DO IN THIS SCRIPT:"
           "\n - test each model to fine tune two hyperparameters"
