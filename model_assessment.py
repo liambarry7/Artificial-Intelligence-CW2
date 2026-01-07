@@ -12,7 +12,7 @@ Script containing the analysis of different classification models
 
 from data_handling import dataset_split
 from models import *
-from sklearn.model_selection import KFold, cross_val_score, GridSearchCV
+from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
 
 def test_model(model):
     """
@@ -31,19 +31,22 @@ def test_model(model):
     #https://www.geeksforgeeks.org/machine-learning/k-fold-cross-validation-in-machine-learning/
 
     # split dataset into 5 fold
+    ff = StratifiedKFold(n_splits=5, shuffle=True, random_state=41) # use StratifiedKFold to avoid imbalanced class distribution
     # ff = KFold(n_splits=5, shuffle=True, random_state=41)
-    ff = KFold(n_splits=5, shuffle=False)
+    # ff = KFold(n_splits=5, shuffle=False)
 
     # switch case to select model
     match model:
         case 'knn':
             pass
         case 'dt':
-            pass
+            decision_tree_fine_tuning(ff)
         case 'mlp':
             mlp_fine_tuning(ff)
         case _:
             print("Model not available.")
+
+    # create summary graphs of hyperparameter compariosn
 
 def mlp_fine_tuning(five_fold):
     """
@@ -68,7 +71,7 @@ def mlp_fine_tuning(five_fold):
     y_train = training_set['Encoded_sign'].to_numpy()
 
     # create new mlp
-    mlp = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=1000, random_state=41)
+    mlp = MLPClassifier(max_iter=1000, random_state=41)
 
     # train and evaluate mlp using 5-fold cross validation
     cv_accuracy_scores = cross_val_score(mlp, x_train, y_train, cv=five_fold)
@@ -78,25 +81,16 @@ def mlp_fine_tuning(five_fold):
     print(f"Mean CV accuracy: {mean_cv}")
     print(f"Standard deviation: {std_cv}")
 
-    # hyperparameters to adjust:
-    # - epochs (iterations)
-    # - hidden layer sizes
-    # - activation function in hidden layer
-    # - learning rate
-    iterations = [500, 750, 1000, 1500] # default = 200, should be above small values like 200 to avoid convergence warning
-    hidden_layer_sizes = []
-    activation_funcs = ['identity', 'logistic', 'tanh', 'relu'] # default = relu
-    learning_rates = ['constant', 'invscaling', 'adaptive'] # default = constant
-
-    # for loop to test all combinations of hyperparameters
     # --> look at using gridsearch https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
     # https://drbeane.github.io/python_dsci/pages/grid_search.html
     print(f"MLP Params : {mlp.get_params()}")
 
     param_grid = [{
-        'activation': ['identity', 'logistic', 'tanh', 'relu'],
-        'learning_rate': ['constant', 'invscaling', 'adaptive'],
-        'max_iter': [500, 750, 1000, 1500] # 500 converges
+        'hidden_layer_sizes': [(64,32), (32,32), (75,50), (48,16)],
+        'activation': ['identity', 'logistic', 'tanh', 'relu'], # default = relu
+        'learning_rate': ['constant', 'invscaling', 'adaptive'], # default = constant
+        'solver': ['sgd', 'adam'] # default = adam
+        # 'alpha': [0.0001, 0.001, 0.005, 0.0005] # default = 0.0001
     }]
 
     # mlp_gridsearch = GridSearchCV(mlp, param_grid, cv=five_fold, scoring='accuracy', refit=True) #param grid = list of dict of parameter settins to try as values
@@ -107,31 +101,84 @@ def mlp_fine_tuning(five_fold):
 
     mlp_gridsearch.fit(x_train, y_train)
 
-    print(mlp_gridsearch.best_params_)
+    print(f"Best MLP params: {mlp_gridsearch.best_params_}")
+    # print(mlp_gridsearch.scoring)
+    print(f"Best MLP Object: {mlp_gridsearch.best_estimator_}")
+    print(f"Best MLP Accuracy Score: {mlp_gridsearch.best_score_}")
+    # print(mlp_gridsearch.cv_results_)
 
     cv_res = mlp_gridsearch.cv_results_
     print(cv_res.keys())
 
-    # first results: {'activation': 'tanh', 'learning_rate': 'constant', 'max_iter': 500}
-    # second results: {'activation': 'tanh', 'learning_rate': 'constant', 'max_iter': 500}
+    results_df = pd.DataFrame(mlp_gridsearch.cv_results_)
+    # params = params used, mean_test_score = avg score over 5 folds, std_test_score =
+    results_df = results_df[['params', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
+    print(results_df.head())
+
+    results_df.to_csv('mlp_gridsearch_rs.csv', index=False)
+
+    # plot graphs to compare performance of top 50 combinations
+    # x = mean, y = std
+    # colours for each hidden layer size, activation, learning rate etc
+    # can be done by reading the csv file
+    # include default hyperparam settings for baseline comparison
+
+
 
 def decision_tree_fine_tuning(ff):
-    
-    
+
+    # https://www.geeksforgeeks.org/machine-learning/building-and-implementing-decision-tree-classifiers-with-scikit-learn-a-comprehensive-guide/
     #get appropriate data
-    training_data, test_data = dataset_split()
+    training_set, test_set = dataset_split()
 
     # split training set into x (landmarks) and y (labels)
     x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
     y_train = training_set['Encoded_sign'].to_numpy()
     
     #create decision tree
-    dtree = decision_tree_create(x_train, y_train, 2072)
+    dtree = tree.DecisionTreeClassifier(random_state=7107)
     
     #evaluated method using 5-fold cv
-   
-    
-    
+    cv_accuracy_scores = cross_val_score(dtree, x_train, y_train, cv=ff)
+    mean_cv = cv_accuracy_scores.mean()
+    std_cv = cv_accuracy_scores.std()
+    print(f"CV accuracy scores: {cv_accuracy_scores}")
+    print(f"Mean CV accuracy: {mean_cv}")
+    print(f"Standard deviation: {std_cv}")
+
+    print(f"dtree Params : {dtree.get_params()}")
+
+    param_grid = [{
+        'max_depth': [5, 10, 20, None], # controls max depth to which tree can grow to, default = None
+        'min_samples_leaf': range(1, 10, 2), # minimum number of samples required to be at a leaf node
+        'min_samples_split': range(1, 10, 2), # minimal number of samples that are needed to split a node
+        'criterion': ["entropy", "gini"] # quality of the split in the decision tree, default = gini
+    }]
+
+    dt_gridsearch = GridSearchCV(dtree, param_grid, cv=ff, scoring='accuracy', refit=True, n_jobs=-1, verbose=2)
+    # n_jobs = -1 : run on all available cores
+    # verbose = 2 : gives update each time fold finishes
+
+    dt_gridsearch.fit(x_train, y_train)
+
+    print(f"Best DT params: {dt_gridsearch.best_params_}")
+    # print(dt_gridsearch.scoring)
+    print(f"Best DT Object: {dt_gridsearch.best_estimator_}")
+    print(f"Best DT Accuracy Score: {dt_gridsearch.best_score_}")
+    # print(dt_gridsearch.cv_results_)
+
+
+    cv_res = dt_gridsearch.cv_results_
+    print(cv_res.keys())
+
+    results_df = pd.DataFrame(dt_gridsearch.cv_results_)
+    # params = params used, mean_test_score = avg score over 5 folds, std_test_score =
+    results_df = results_df[
+        ['params', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(
+        by='rank_test_score')
+    print(results_df.head())
+
+    results_df.to_csv('dt_gridsearch_rs.csv', index=False)
     
 
 def test_harness():
@@ -147,8 +194,14 @@ def test_harness():
           # "\n OR"
           # "\n Adapt model functions to first do 5fold tests, then use .fit to train on actual datasets etc like in labsheet ")
 
+    # next to do:
+    # - kNN hyperparam tests
+    # - create graphs to compare settings
+    # - retrain best models (best kNN, DT and MLP) on on entire training set
+    # - then compare each classifier
 
     test_model("mlp")
+    # test_model("dt")
 
 
 if __name__ == '__main__':
