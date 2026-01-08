@@ -14,7 +14,7 @@ import pandas as pd
 from data_handling import dataset_split
 from models import *
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
 def test_model(model):
@@ -96,7 +96,28 @@ def test_model(model):
 
 
 
+def ffcv_knn(X, y, k, distance_metric):
+    """
+    Five fold cross validation - takes a dataset and hyperparameters and checks
+    accuracy by splitting the dataset into 5 folds to perform cross validation
+    with given hyperparameters
+    
+    Parameters
+    ----------
 
+    X
+        Dataset - unlabelled
+    
+    y
+        Dataset labels
+    
+    k : int
+        'k' hyperparameter to be used by kNN
+
+    distance_metric : str
+        Distance metric to be used by kNN
+    """
+    return NotImplemented
 
 def knn_fine_tuning(ff):
     """
@@ -105,7 +126,7 @@ def knn_fine_tuning(ff):
 
         ------
         inputs:
-            five_fold: provides the train/test indices to split into 5 train/test sets
+            ff: provides the train/test indices to split into 5 train/test sets
 
         ------
         returns: N/A
@@ -114,50 +135,66 @@ def knn_fine_tuning(ff):
     # get dataset
     training_set, test_set = dataset_split()
 
-    # split training set
-    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
-    y_train = training_set['Encoded_sign'].to_numpy()
+    # shuffle dataset
+    training_set = training_set.sample(frac=1, random_state=42).reset_index(drop=True)
 
-    # base knn model
-    knn = KNeighborsClassifier()
+    # split into 5 folds
+    fold_size = len(training_set) // 5
+    folds = [training_set.iloc[i*fold_size:(i+1)*fold_size] for i in range(5)]
 
-    # baseline CV score (before tuning)
-    cv_accuracy_scores = cross_val_score(knn, x_train, y_train, cv=ff)
-    print(f"CV accuracy scores: {cv_accuracy_scores}")
-    print(f"Mean CV accuracy: {cv_accuracy_scores.mean()}")
-    print(f"Standard deviation: {cv_accuracy_scores.std()}")
-    
-    # parameter grid
-    param_grid = {
-        'n_neighbors': [1, 3, 5, 7, 9],
-        'weights': ['uniform', 'distance'],
-        'metric': ['euclidean', 'manhattan']
-    }
+    # set hyperparameter options to be tested
+    k_values = [1, 3, 5, 7, 9]
+    distance_metrics = ['E', 'M']   #euclidean and manhattan
+    results = []
 
-    # grid search
-    knn_gridsearch = GridSearchCV(
-        knn,
-        param_grid,
-        cv=ff,
-        scoring='accuracy',
-        refit=True,
-        n_jobs=-1,
-        verbose=2
-    )
+    for metric in distance_metrics:
+        for k in k_values:
+            fold_accuracies = []
+            for i in range(5):
+                test_set = folds[i]
+                train_set = pd.concat(folds[:i] + folds[i+1:]) #(all other folds)
 
-    knn_gridsearch.fit(x_train, y_train)
+                # split into X and y and create training dataset
+                x_train = train_set.drop(['Encoded_sign'], axis=1).to_numpy()
+                y_train = train_set['Encoded_sign'].to_numpy()
+                dataset = [(x, y) for x, y in zip(x_train, y_train)]
 
-    print(f"Best kNN params: {knn_gridsearch.best_params_}")
-    print(f"Best kNN Accuracy Score: {knn_gridsearch.best_score_}")
+                x_test = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
+                y_test = test_set['Encoded_sign'].to_numpy()
 
-    # export results
-    results_df = pd.DataFrame(knn_gridsearch.cv_results_)
-    results_df = results_df[
-        ['param_n_neighbors', 'param_weights', 'param_metric',
-         'mean_test_score', 'std_test_score', 'rank_test_score']
-    ].sort_values(by='rank_test_score')
+                # test this fold
+                y_pred = [kNN_predict(dataset, x, k, metric) for x in x_test]
+                fold_accuracy = accuracy_score(y_test, y_pred)
+                fold_accuracies.append(fold_accuracy)
+            
+            # calculate mean and std over folds
+            mean_acc = sum(fold_accuracies)/len(fold_accuracies)
+            std_acc = np.std(fold_accuracies)
 
+            # store the result
+            results.append({
+                'param_n_neighbors': k,
+                'param_metric': metric,
+                'mean_test_score': mean_acc,
+                'std_test_score': std_acc
+            })
+
+    # after all h.p. combinations have been handled:
+
+    # convert list to DataFrame
+    results_df = pd.DataFrame(results)    
+
+    # add rank column
+    results_df['rank_test_score'] = results_df['mean_test_score'].rank(ascending=False, method='min').astype(int)
+
+    # sort DataFrame
+    results_df = results_df.sort_values(by='rank_test_score', ascending=True)
+    results_df = results_df.reset_index(drop=True)
+
+    # print best result, save all
+    print(f"Best hyperparameters: \n{results_df.iloc[0]}")
     results_df.to_csv('data_exports/knn_gridsearch_rs.csv', index=False)
+
 
 def mlp_fine_tuning(five_fold):
     """
@@ -319,7 +356,7 @@ def compare_best_models():
     dt_results = pd.read_csv("data_exports/dt_gridsearch_rs.csv")
 
     # get list of kNN params
-    knn_optimal_params = knn_results[['param_n_neighbors', 'param_weights', 'param_metric']].iloc[0]
+    knn_optimal_params = knn_results[['param_n_neighbors', 'param_metric']].iloc[0]
 
     knn_params = knn_optimal_params.to_list()
     knn_params[0] = int(knn_params[0])  # ensure k is int
@@ -350,15 +387,13 @@ def compare_best_models():
     x_test = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
     y_test = test_set['Encoded_sign'].to_numpy() # labels
 
-    # get kNN object
-    #...
 
     # train models on whole training set
     mlp = multilayer_perceptron(x_train, y_train, mlp_params)
     dt = decision_tree_create(x_train, y_train, 7107, dt_params)
 
     # get model predictions from test set
-    knn_y_pred = kNN_predict_batch(x_test, knn_params[0])
+    knn_y_pred = kNN_predict_batch(x_test, knn_params[0], knn_params[1])
     mlp_y_pred = mlp_predict(mlp, x_test)
     dt_y_pred = decision_tree_decision(dt, x_test)
 
@@ -432,7 +467,6 @@ def test_harness():
 
 
     compare_best_models()
-
 
 if __name__ == '__main__':
     test_harness()

@@ -41,11 +41,32 @@ def euclidean(A, B):
     -------
 
     float
-        Distance between vector A and vector B
+        Euclidean distance between vector A and vector B
     """
     return math.sqrt(sum((a - b) ** 2 for a, b in zip(A, B)))
 
-def get_neighbours(dataset, input_vector, k):
+def manhattan(A, B):
+    """
+    Simple Manhattan distance function
+
+    Parameters
+    ----------
+
+    A : list
+        List representation of first 63-dimentional vector
+
+    B : list
+        List representation of second 63-dimentional vector
+
+    Returns
+    -------
+
+    float
+        Manhattan distance between vector A and vector B
+    """
+    return sum(abs(a - b) for a, b in zip(A, B))
+
+def get_neighbours(dataset, input_vector, k, distance_metric="E"):
     """
     Helper function for kNN_predict - finds a specified number
     of the dataset's closest matches to input_vector.
@@ -62,6 +83,9 @@ def get_neighbours(dataset, input_vector, k):
     k : int
         The number of neighbours to compare to input_vector
 
+    distance_metric : str
+        Distance metric to be used (Euclidean or Manhattan - defaults to Euclidean)
+
     Returns
     -------
     neighbours : list of tuples
@@ -72,9 +96,14 @@ def get_neighbours(dataset, input_vector, k):
 
     #create and populate a list of distances using euclidean function
     distances = []
-    for features, handsign in dataset:
-        dist = euclidean(features, input_vector)
-        distances.append((dist, handsign))
+    if distance_metric == "M":
+        for features, handsign in dataset:
+            dist = manhattan(features, input_vector)
+            distances.append((dist, handsign))
+    elif distance_metric == "E":
+        for features, handsign in dataset:
+            dist = euclidean(features, input_vector)
+            distances.append((dist, handsign))
     
     #sort by lowest distance first
     distances.sort(key=lambda x: x[0])
@@ -83,7 +112,7 @@ def get_neighbours(dataset, input_vector, k):
 
     return neighbours
 
-def kNN_predict(dataset, input_vector, k):
+def kNN_predict(dataset, input_vector, k, distance_metric="E"):
     """
     Uses a helper function to find the nearest neighbours
     to input_vector. It then strips them down to their labels and
@@ -101,6 +130,9 @@ def kNN_predict(dataset, input_vector, k):
     k : int
         The number of neighbours to compare to input_vector
 
+    distance_metric : str
+        Distance metric to be used (Euclidean or Manhattan - defaults to Euclidean)
+
     Returns
     -------
     most_common_label : float
@@ -117,7 +149,7 @@ def kNN_predict(dataset, input_vector, k):
 
     return most_common_label
 
-def kNN(dataset_df, input_vector, k):
+def kNN(dataset_df, input_vector, k, distance_metric="E"):
     """
     Main kNN function - takes in dataset as DataFrame and parses to
     a list of tuples - (features, label) then runs kNN algorithm to 
@@ -134,6 +166,9 @@ def kNN(dataset_df, input_vector, k):
 
     k : int
         Number of neighbours to be examined
+
+    distance_metric : str
+        Distance metric to be used (Euclidean or Manhattan - defaults to Euclidean)
 
     Returns
     -------
@@ -157,7 +192,7 @@ def kNN(dataset_df, input_vector, k):
 
     return (kNN_predict(dataset, input_vector, k))
 
-def kNN_predict_batch(X, k):
+def kNN_predict_batch(X, k, distance_metric="E"):
     """
     Batch kNN function for finetuning purposes.
     
@@ -169,6 +204,9 @@ def kNN_predict_batch(X, k):
 
     k : int
         Number of neighbours to be examined
+
+    distance_metric : str
+        Distance metric to be used (Euclidean or Manhattan - defaults to Euclidean)
 
     Returns
     -------
@@ -188,7 +226,7 @@ def kNN_predict_batch(X, k):
         features = row[1:]
         dataset.append((features, label))
 
-    return [kNN_predict(dataset, x, k) for x in X]
+    return [kNN_predict(dataset, x, k, "E") for x in X]
 
 
 def decision_tree_create(inputData, trainingData, SEED, params):
