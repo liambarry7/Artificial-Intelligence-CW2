@@ -9,10 +9,12 @@ Script containing the analysis of different classification models
 @date:   05/01/2026
 
 """
+import pandas as pd
 
 from data_handling import dataset_split
 from models import *
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
+import matplotlib.pyplot as plt
 
 def test_model(model):
     """
@@ -43,10 +45,64 @@ def test_model(model):
             decision_tree_fine_tuning(ff)
         case 'mlp':
             mlp_fine_tuning(ff)
+        case 'results':
+            print("Showing comparison between models...")
         case _:
             print("Model not available.")
 
-    # create summary graphs of hyperparameter compariosn
+    # create summary graphs of hyperparameter comparison
+    model_results = ['dt_gridsearch_rs.csv', 'mlp_gridsearch_rs.csv']
+    # model_results = ['mlp_gridsearch_rs.csv']
+
+    # plot graphs to compare performance of top 50 combinations
+    # x = mean, y = std
+    # colours for each hidden layer size, activation, learning rate etc
+    # can be done by reading the csv file
+    # include default hyperparam settings for baseline comparison
+
+    for results in model_results:
+        results_df = pd.read_csv(results)
+        print(results_df.head())
+        print(results_df.columns)
+
+        x_values = results_df['mean_test_score'].to_numpy()
+        y_values = results_df['std_test_score'].to_numpy()
+
+        plt.scatter(x_values, y_values)
+
+    plt.show()
+
+    import seaborn as sns
+    colours = ["flare", "crest"]
+    for results in range(len(model_results)):
+        results_df = pd.read_csv(model_results[results])
+
+        sns.scatterplot(
+            data=results_df,
+            x='mean_test_score',
+            y='std_test_score',
+            hue='rank_test_score',
+            palette=sns.color_palette(colours[results], as_cmap=True)
+        )
+
+    plt.title("Test")
+    plt.show()
+
+    test = pd.read_csv('mlp_gridsearch_rs.csv')
+    # sns.scatterplot(
+    #     data=test,
+    #     x='mean_test_score',
+    #     y='std_test_score',
+    #     hue='param_activation',
+    #     palette=sns.color_palette("flare")
+    # )
+
+    plt.title("Test")
+    plt.show()
+
+
+
+
 
 def mlp_fine_tuning(five_fold):
     """
@@ -56,8 +112,6 @@ def mlp_fine_tuning(five_fold):
         ------
         inputs:
             five_fold: provides the train/test indices to split into 5 train/test sets
-
-            test_data: a dataframe consisting of data that is used to test the model
 
         ------
         returns: n/a
@@ -108,11 +162,13 @@ def mlp_fine_tuning(five_fold):
     # print(mlp_gridsearch.cv_results_)
 
     cv_res = mlp_gridsearch.cv_results_
-    print(cv_res.keys())
+    print(cv_res.keys()) # dict_keys(['mean_fit_time', 'std_fit_time', 'mean_score_time', 'std_score_time', 'param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver', 'params', 'split0_test_score', 'split1_test_score', 'split2_test_score', 'split3_test_score', 'split4_test_score', 'mean_test_score', 'std_test_score', 'rank_test_score'])
+
 
     results_df = pd.DataFrame(mlp_gridsearch.cv_results_)
-    # params = params used, mean_test_score = avg score over 5 folds, std_test_score =
-    results_df = results_df[['params', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
+    # # params = params used, mean_test_score = avg score over 5 folds, std_test_score =
+    # results_df = results_df[['params', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
+    results_df = results_df[['param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
     print(results_df.head())
 
     results_df.to_csv('mlp_gridsearch_rs.csv', index=False)
@@ -126,8 +182,19 @@ def mlp_fine_tuning(five_fold):
 
 
 def decision_tree_fine_tuning(ff):
+    """
+        A function used to test DecisionTreeClassifiers using 5 fold cross validation to
+        find its best hyperparameters
 
+        ------
+        inputs:
+            five_fold: provides the train/test indices to split into 5 train/test sets
+
+        ------
+        returns: n/a
+        """
     # https://www.geeksforgeeks.org/machine-learning/building-and-implementing-decision-tree-classifiers-with-scikit-learn-a-comprehensive-guide/
+
     #get appropriate data
     training_set, test_set = dataset_split()
 
@@ -151,7 +218,7 @@ def decision_tree_fine_tuning(ff):
     param_grid = [{
         'max_depth': [5, 10, 20, None], # controls max depth to which tree can grow to, default = None
         'min_samples_leaf': range(1, 10, 2), # minimum number of samples required to be at a leaf node
-        'min_samples_split': range(1, 10, 2), # minimal number of samples that are needed to split a node
+        'min_samples_split': range(2, 10, 2), # minimal number of samples that are needed to split a node
         'criterion': ["entropy", "gini"] # quality of the split in the decision tree, default = gini
     }]
 
@@ -173,13 +240,62 @@ def decision_tree_fine_tuning(ff):
 
     results_df = pd.DataFrame(dt_gridsearch.cv_results_)
     # params = params used, mean_test_score = avg score over 5 folds, std_test_score =
-    results_df = results_df[
-        ['params', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(
-        by='rank_test_score')
+    # results_df = results_df[['params', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
+    results_df = results_df[['param_criterion', 'param_max_depth', 'param_min_samples_leaf', 'param_min_samples_split', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
     print(results_df.head())
 
     results_df.to_csv('dt_gridsearch_rs.csv', index=False)
-    
+
+
+def compare_best_models():
+    # PART 2C : 3,4
+    # - retrain best models (best kNN, DT and MLP) on entire training set
+    # then compare each one against each other
+    # return the best model with their parameters
+
+    # get best params from csv files - first line as ranked
+    # knn?
+    mlp_results = pd.read_csv("mlp_gridsearch_rs.csv")
+    dt_results = pd.read_csv("dt_gridsearch_rs.csv")
+
+    # get list of kNN params
+    #...
+
+    # get list of MLP params
+    mlp_optimal_params = mlp_results[['param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver']].iloc[0]
+    print(f"MLP Best Params: {mlp_optimal_params}")
+    print(f"MLP Best Params: {type(mlp_optimal_params)}")
+    mlp_params = mlp_optimal_params.to_list()
+
+    # convert hidden_layer_sizes from string back into tuple
+    import ast # https://www.geeksforgeeks.org/python/difference-between-eval-and-ast-literal-eval-in-python/
+    mlp_params[1] = ast.literal_eval(mlp_params[1])
+    print(mlp_params)
+
+    # get list of DT params
+    dt_optimal_params = dt_results[['param_criterion', 'param_max_depth', 'param_min_samples_leaf', 'param_min_samples_split']].iloc[0]
+    print(f"DT Best Params: {dt_optimal_params}")
+    dt_params = dt_optimal_params.to_list()
+    print(dt_params)
+
+    # get training and test datasets
+    training_set, test_set = dataset_split()
+
+    # split training set into x (landmarks) and y (labels)
+    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_train = training_set['Encoded_sign'].to_numpy() # labels
+    x_test = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_test = test_set['Encoded_sign'].to_numpy() # labels
+
+    # get MLPClassifier object
+    mlp = multilayer_perceptron(x_train, y_train, mlp_params)
+    mlp_y_pred = mlp_predict(mlp, x_test)
+
+    # get mlp accuracy
+    mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
+    print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
+
+
 
 def test_harness():
     print("TO DO IN THIS SCRIPT:"
@@ -200,8 +316,12 @@ def test_harness():
     # - retrain best models (best kNN, DT and MLP) on on entire training set
     # - then compare each classifier
 
-    test_model("mlp")
+    # test_model("mlp")
     # test_model("dt")
+    # test_model("results")
+
+
+    compare_best_models()
 
 
 if __name__ == '__main__':

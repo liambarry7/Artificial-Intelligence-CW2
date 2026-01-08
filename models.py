@@ -200,7 +200,7 @@ def decision_tree_decision(dTree, item):
     return prediction
 
 
-def multilayer_perceptron(training_data, test_data):
+def multilayer_perceptron(training_data_x, training_data_y, params):
     # ADD OPTIMAL PARAMETERS LIST PARAMETER FROM 5FOLD VALIDATION TESTS TO CREATE BEST MLP
     """
     Creates a multilayer perceptron to classifier, which is used to test the training data
@@ -214,41 +214,13 @@ def multilayer_perceptron(training_data, test_data):
     ------
     returns: mlp object to be used to predict in separate function
     """
-    # https://www.geeksforgeeks.org/deep-learning/multi-layer-perceptron-learning-in-tensorflow/
-    # https://www.geeksforgeeks.org/machine-learning/classification-using-sklearn-multi-layer-perceptron/
-
-    # split training dataframes into x (coords) and y (features) elements, and turn into numpy arrays for model
-    x_train = training_data.drop(['Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
-    y_train = training_data['Encoded_sign'].to_numpy()
-
-    x_test = test_data.drop(['Encoded_sign'], axis=1).to_numpy()
-    y_test = test_data['Encoded_sign'].to_numpy()
-
-    print(f"x: {x_train[0]}")
-
-    # create an MLP model; 2 hidden layers (64 and 32 neurons each), max epochs (1000) to train
-    # random state (41) to set a fixed seed for initialising weights
-    mlp = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=1000, random_state=41)
+    # create an MLP model that accepts parameters for model customisation/optimisation
+    mlp = MLPClassifier(activation=params[0], hidden_layer_sizes=params[1], learning_rate=params[2], solver=params[3], max_iter=1000, random_state=41)
 
     # train MLP model
-    mlp.fit(x_train, y_train)
+    mlp.fit(training_data_x, training_data_y)
 
     return mlp
-
-    # use trained MLP to make predictions on test data
-    # y_pred = mlp.predict(x_test)
-    # print(y_pred)
-    #
-    # # Example of testing a singular row for classification
-    # # t_x = test_data.iloc[100]
-    # # print(t_x)
-    # # tt_x = t_x.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign', 'Encoded_sign']).to_numpy()
-    # # tt_xr = tt_x.reshape(1, -1)
-    # # print(mlp.predict(tt_xr))
-    #
-    #
-    # accuracy = metrics.accuracy_score(y_test, y_pred)
-    # print(f"Accuracy: {accuracy * 100:.2f}%")
 
 def mlp_predict(mlp, test_data):
     """
@@ -261,29 +233,23 @@ def mlp_predict(mlp, test_data):
             test_data: a dataframe consisting of data that is used to test the model
 
         ------
-        returns: n/a
+        returns: list of predicted classes
         """
-
-    # split test dataframes into x (coords) and y (features) elements, and turn into numpy arrays for model
-    x_test = test_data.drop(['Encoded_sign'], axis=1).to_numpy()
-    y_test = test_data['Encoded_sign'].to_numpy()
-
     # use trained MLP to make predictions on test data
-    y_pred = mlp.predict(x_test)
+    y_pred = mlp.predict(test_data)
     print(y_pred)
 
     # Example of testing a singular row for classification
-    t_x = test_data.iloc[100]
-    print(f"singular test data: {t_x}")
-    tt_x = t_x.drop(['Encoded_sign']).to_numpy()
-    tt_xr = tt_x.reshape(1, -1)
-    idv_pred = mlp.predict(tt_xr)
-    print(f"Class prediction: {idv_pred}")
-    print(f"Actual class: {t_x['Encoded_sign']}")
+    # t_x = test_data.iloc[100]
+    # print(f"singular test data: {t_x}")
+    # tt_x = t_x.drop(['Encoded_sign']).to_numpy()
+    # tt_xr = tt_x.reshape(1, -1)
+    # idv_pred = mlp.predict(tt_xr)
+    # print(f"Class prediction: {idv_pred}")
+    # print(f"Actual class: {t_x['Encoded_sign']}")
 
-    # calc accuracy
-    accuracy = metrics.accuracy_score(y_test, y_pred)
-    print(f"Overall Accuracy: {accuracy * 100:.2f}%")
+    # return predicted classes
+    return y_pred
 
 
 #Test harness
@@ -343,6 +309,12 @@ def test_harness_v2():
     training_set, test_set = dataset_split()
     print(f"Columns: {training_set.columns}")
 
+    # split training set into x (landmarks) and y (labels)
+    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_train = training_set['Encoded_sign'].to_numpy()  # labels
+    x_test = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_test = test_set['Encoded_sign'].to_numpy()  # labels
+
 
     # test run kNN
 
@@ -361,8 +333,8 @@ def test_harness_v2():
     
 
     # Test run MLP
-    mlp = multilayer_perceptron(training_set, test_set)
-    mlp_predict(mlp, test_set)
+    mlp = multilayer_perceptron(x_train, y_train, params=["relu",(48, 16),"adaptive","sgd"])
+    mlp_predict(mlp, x_test)
 
 
 if __name__ == '__main__':

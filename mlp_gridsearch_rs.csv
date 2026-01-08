@@ -1,97 +1,97 @@
-params,mean_test_score,std_test_score,rank_test_score
-"{'activation': 'logistic', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9657754010695185,0.005215236662505436,1
-"{'activation': 'logistic', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'adam'}",0.9657754010695185,0.005215236662505436,1
-"{'activation': 'logistic', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9657754010695185,0.005215236662505436,1
-"{'activation': 'tanh', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9629233511586452,0.00861536254801753,4
-"{'activation': 'tanh', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'adam'}",0.9629233511586452,0.013687239800679107,4
-"{'activation': 'tanh', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9629233511586452,0.00861536254801753,4
-"{'activation': 'tanh', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9629233511586452,0.00861536254801753,4
-"{'activation': 'tanh', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9629233511586452,0.013687239800679107,4
-"{'activation': 'tanh', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9629233511586452,0.013687239800679107,4
-"{'activation': 'relu', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.962210338680927,0.01053956898331156,10
-"{'activation': 'relu', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.962210338680927,0.01053956898331156,10
-"{'activation': 'relu', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'adam'}",0.962210338680927,0.01053956898331156,10
-"{'activation': 'tanh', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9622103386809269,0.010778050950325134,13
-"{'activation': 'tanh', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9622103386809269,0.010778050950325134,13
-"{'activation': 'tanh', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9618538324420678,0.01196289606813728,15
-"{'activation': 'tanh', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9618538324420678,0.0076959119946249325,15
-"{'activation': 'tanh', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9618538324420678,0.0076959119946249325,15
-"{'activation': 'tanh', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'adam'}",0.9618538324420678,0.0076959119946249325,15
-"{'activation': 'tanh', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9618538324420678,0.013603411071899385,15
-"{'activation': 'relu', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9618538324420678,0.007183401668310119,15
-"{'activation': 'tanh', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9618538324420678,0.013603411071899385,15
-"{'activation': 'relu', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9618538324420678,0.007183401668310119,15
-"{'activation': 'logistic', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'adam'}",0.9618538324420676,0.006534867301184796,23
-"{'activation': 'logistic', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9618538324420676,0.006534867301184796,23
-"{'activation': 'logistic', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9618538324420676,0.006534867301184796,23
-"{'activation': 'tanh', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9614973262032086,0.01196289606813728,26
-"{'activation': 'relu', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.960071301247772,0.008481552408820175,27
-"{'activation': 'relu', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.960071301247772,0.008481552408820175,27
-"{'activation': 'relu', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'adam'}",0.960071301247772,0.008481552408820175,27
-"{'activation': 'tanh', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9600713012477717,0.013176269955491158,30
-"{'activation': 'tanh', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9600713012477717,0.013176269955491158,30
-"{'activation': 'tanh', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9600713012477717,0.013176269955491158,30
-"{'activation': 'logistic', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9597147950089127,0.011748489877564406,33
-"{'activation': 'relu', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9597147950089127,0.01073077856919246,33
-"{'activation': 'logistic', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9597147950089127,0.011748489877564406,33
-"{'activation': 'logistic', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9597147950089127,0.011748489877564406,33
-"{'activation': 'relu', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9593582887700535,0.009186523156310258,37
-"{'activation': 'relu', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9593582887700535,0.010718927899018125,37
-"{'activation': 'relu', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9590017825311943,0.009296545319362075,39
-"{'activation': 'logistic', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9586452762923351,0.008541282389098714,40
-"{'activation': 'relu', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9586452762923351,0.010233654256261925,40
-"{'activation': 'relu', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9586452762923351,0.010233654256261925,40
-"{'activation': 'logistic', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9586452762923351,0.008541282389098714,40
-"{'activation': 'relu', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9586452762923351,0.010233654256261925,40
-"{'activation': 'logistic', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9586452762923351,0.008541282389098714,40
-"{'activation': 'identity', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9582887700534759,0.01655356401603408,46
-"{'activation': 'relu', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9579322638146166,0.013272378231006259,47
-"{'activation': 'relu', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9579322638146166,0.013272378231006259,47
-"{'activation': 'identity', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9579322638146166,0.016282619959599634,47
-"{'activation': 'tanh', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9572192513368984,0.012503157159893155,50
-"{'activation': 'tanh', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9568627450980391,0.012370304151798538,51
-"{'activation': 'identity', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9568627450980391,0.016157246621924644,51
-"{'activation': 'identity', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.95650623885918,0.017377622255905795,53
-"{'activation': 'identity', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.95650623885918,0.017377622255905795,53
-"{'activation': 'identity', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.95650623885918,0.017377622255905795,53
-"{'activation': 'identity', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9561497326203208,0.016591909131151657,56
-"{'activation': 'identity', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9557932263814617,0.014629792890326712,57
-"{'activation': 'identity', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9554367201426025,0.014437402303969058,58
-"{'activation': 'identity', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9550802139037433,0.015474177835444339,59
-"{'activation': 'identity', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9547237076648841,0.016165110942965615,60
-"{'activation': 'identity', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'adam'}",0.9543672014260249,0.015726734402932437,61
-"{'activation': 'identity', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9543672014260249,0.015726734402932437,61
-"{'activation': 'identity', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9543672014260249,0.015726734402932437,61
-"{'activation': 'identity', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9532976827094475,0.015879541854773686,64
-"{'activation': 'identity', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'adam'}",0.9532976827094475,0.015879541854773686,64
-"{'activation': 'identity', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9532976827094475,0.015879541854773686,64
-"{'activation': 'identity', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9529411764705882,0.01388087153934532,67
-"{'activation': 'identity', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9529411764705882,0.01388087153934532,67
-"{'activation': 'identity', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9529411764705882,0.01388087153934532,67
-"{'activation': 'relu', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'adam'}",0.9515151515151515,0.007253828858957489,70
-"{'activation': 'relu', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'adam'}",0.9515151515151515,0.007253828858957489,70
-"{'activation': 'relu', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'adam'}",0.9515151515151515,0.007253828858957489,70
-"{'activation': 'logistic', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9190730837789662,0.015192353477834255,73
-"{'activation': 'logistic', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9190730837789662,0.015192353477834255,73
-"{'activation': 'logistic', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.9112299465240643,0.011239845112609252,75
-"{'activation': 'logistic', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'constant', 'solver': 'sgd'}",0.9112299465240643,0.011239845112609252,75
-"{'activation': 'logistic', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.8983957219251337,0.015943443689838094,77
-"{'activation': 'logistic', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.8983957219251337,0.015943443689838094,77
-"{'activation': 'logistic', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'adaptive', 'solver': 'sgd'}",0.8695187165775401,0.016468890499038994,79
-"{'activation': 'logistic', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'constant', 'solver': 'sgd'}",0.8695187165775401,0.016468890499038994,79
-"{'activation': 'identity', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.6420677361853833,0.013118267018163357,81
-"{'activation': 'identity', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.6103386809269162,0.010965102673247577,82
-"{'activation': 'identity', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.41711229946524064,0.01862723775773708,83
-"{'activation': 'identity', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.3893048128342246,0.010611676339491784,84
-"{'activation': 'tanh', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.3746880570409982,0.008976597726926324,85
-"{'activation': 'tanh', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.364349376114082,0.021703003572512546,86
-"{'activation': 'tanh', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.2655971479500891,0.010813369617185807,87
-"{'activation': 'relu', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.25240641711229944,0.006029067566947509,88
-"{'activation': 'tanh', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.21497326203208558,0.012584215753813044,89
-"{'activation': 'relu', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.19928698752228163,0.0062158986717157525,90
-"{'activation': 'relu', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.1700534759358289,0.007612890019273661,91
-"{'activation': 'relu', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.16755793226381463,0.005287842058535236,92
-"{'activation': 'logistic', 'hidden_layer_sizes': (32, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.11158645276292337,0.0008732583753237723,93
-"{'activation': 'logistic', 'hidden_layer_sizes': (75, 50), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.09839572192513371,0.007761690216426822,94
-"{'activation': 'logistic', 'hidden_layer_sizes': (48, 16), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.07557932263814617,0.0008732583753237723,95
-"{'activation': 'logistic', 'hidden_layer_sizes': (64, 32), 'learning_rate': 'invscaling', 'solver': 'sgd'}",0.07557932263814617,0.0008732583753237723,95
+param_activation,param_hidden_layer_sizes,param_learning_rate,param_solver,mean_test_score,std_test_score,rank_test_score
+logistic,"(48, 16)",adaptive,adam,0.9657754010695185,0.005215236662505436,1
+logistic,"(48, 16)",constant,adam,0.9657754010695185,0.005215236662505436,1
+logistic,"(48, 16)",invscaling,adam,0.9657754010695185,0.005215236662505436,1
+tanh,"(64, 32)",constant,adam,0.9629233511586452,0.00861536254801753,4
+tanh,"(75, 50)",constant,adam,0.9629233511586452,0.013687239800679107,4
+tanh,"(64, 32)",invscaling,adam,0.9629233511586452,0.00861536254801753,4
+tanh,"(64, 32)",adaptive,adam,0.9629233511586452,0.00861536254801753,4
+tanh,"(75, 50)",invscaling,adam,0.9629233511586452,0.013687239800679107,4
+tanh,"(75, 50)",adaptive,adam,0.9629233511586452,0.013687239800679107,4
+relu,"(75, 50)",invscaling,adam,0.962210338680927,0.01053956898331156,10
+relu,"(75, 50)",adaptive,adam,0.962210338680927,0.01053956898331156,10
+relu,"(75, 50)",constant,adam,0.962210338680927,0.01053956898331156,10
+tanh,"(32, 32)",constant,sgd,0.9622103386809269,0.010778050950325134,13
+tanh,"(32, 32)",adaptive,sgd,0.9622103386809269,0.010778050950325134,13
+tanh,"(64, 32)",adaptive,sgd,0.9618538324420678,0.01196289606813728,15
+tanh,"(48, 16)",adaptive,adam,0.9618538324420678,0.0076959119946249325,15
+tanh,"(48, 16)",invscaling,adam,0.9618538324420678,0.0076959119946249325,15
+tanh,"(48, 16)",constant,adam,0.9618538324420678,0.0076959119946249325,15
+tanh,"(48, 16)",constant,sgd,0.9618538324420678,0.013603411071899385,15
+relu,"(32, 32)",adaptive,sgd,0.9618538324420678,0.007183401668310119,15
+tanh,"(48, 16)",adaptive,sgd,0.9618538324420678,0.013603411071899385,15
+relu,"(32, 32)",constant,sgd,0.9618538324420678,0.007183401668310119,15
+logistic,"(75, 50)",constant,adam,0.9618538324420676,0.006534867301184796,23
+logistic,"(75, 50)",invscaling,adam,0.9618538324420676,0.006534867301184796,23
+logistic,"(75, 50)",adaptive,adam,0.9618538324420676,0.006534867301184796,23
+tanh,"(64, 32)",constant,sgd,0.9614973262032086,0.01196289606813728,26
+relu,"(48, 16)",invscaling,adam,0.960071301247772,0.008481552408820175,27
+relu,"(48, 16)",adaptive,adam,0.960071301247772,0.008481552408820175,27
+relu,"(48, 16)",constant,adam,0.960071301247772,0.008481552408820175,27
+tanh,"(32, 32)",adaptive,adam,0.9600713012477717,0.013176269955491158,30
+tanh,"(32, 32)",invscaling,adam,0.9600713012477717,0.013176269955491158,30
+tanh,"(32, 32)",constant,adam,0.9600713012477717,0.013176269955491158,30
+logistic,"(64, 32)",invscaling,adam,0.9597147950089127,0.011748489877564406,33
+relu,"(48, 16)",adaptive,sgd,0.9597147950089127,0.01073077856919246,33
+logistic,"(64, 32)",adaptive,adam,0.9597147950089127,0.011748489877564406,33
+logistic,"(64, 32)",constant,adam,0.9597147950089127,0.011748489877564406,33
+relu,"(75, 50)",constant,sgd,0.9593582887700535,0.009186523156310258,37
+relu,"(48, 16)",constant,sgd,0.9593582887700535,0.010718927899018125,37
+relu,"(75, 50)",adaptive,sgd,0.9590017825311943,0.009296545319362075,39
+logistic,"(32, 32)",adaptive,adam,0.9586452762923351,0.008541282389098714,40
+relu,"(64, 32)",adaptive,adam,0.9586452762923351,0.010233654256261925,40
+relu,"(64, 32)",constant,adam,0.9586452762923351,0.010233654256261925,40
+logistic,"(32, 32)",invscaling,adam,0.9586452762923351,0.008541282389098714,40
+relu,"(64, 32)",invscaling,adam,0.9586452762923351,0.010233654256261925,40
+logistic,"(32, 32)",constant,adam,0.9586452762923351,0.008541282389098714,40
+identity,"(32, 32)",adaptive,sgd,0.9582887700534759,0.01655356401603408,46
+relu,"(64, 32)",adaptive,sgd,0.9579322638146166,0.013272378231006259,47
+relu,"(64, 32)",constant,sgd,0.9579322638146166,0.013272378231006259,47
+identity,"(32, 32)",constant,sgd,0.9579322638146166,0.016282619959599634,47
+tanh,"(75, 50)",constant,sgd,0.9572192513368984,0.012503157159893155,50
+tanh,"(75, 50)",adaptive,sgd,0.9568627450980391,0.012370304151798538,51
+identity,"(48, 16)",constant,sgd,0.9568627450980391,0.016157246621924644,51
+identity,"(64, 32)",invscaling,adam,0.95650623885918,0.017377622255905795,53
+identity,"(64, 32)",constant,adam,0.95650623885918,0.017377622255905795,53
+identity,"(64, 32)",adaptive,adam,0.95650623885918,0.017377622255905795,53
+identity,"(48, 16)",adaptive,sgd,0.9561497326203208,0.016591909131151657,56
+identity,"(75, 50)",adaptive,sgd,0.9557932263814617,0.014629792890326712,57
+identity,"(75, 50)",constant,sgd,0.9554367201426025,0.014437402303969058,58
+identity,"(64, 32)",constant,sgd,0.9550802139037433,0.015474177835444339,59
+identity,"(64, 32)",adaptive,sgd,0.9547237076648841,0.016165110942965615,60
+identity,"(75, 50)",constant,adam,0.9543672014260249,0.015726734402932437,61
+identity,"(75, 50)",invscaling,adam,0.9543672014260249,0.015726734402932437,61
+identity,"(75, 50)",adaptive,adam,0.9543672014260249,0.015726734402932437,61
+identity,"(48, 16)",invscaling,adam,0.9532976827094475,0.015879541854773686,64
+identity,"(48, 16)",constant,adam,0.9532976827094475,0.015879541854773686,64
+identity,"(48, 16)",adaptive,adam,0.9532976827094475,0.015879541854773686,64
+identity,"(32, 32)",constant,adam,0.9529411764705882,0.01388087153934532,67
+identity,"(32, 32)",invscaling,adam,0.9529411764705882,0.01388087153934532,67
+identity,"(32, 32)",adaptive,adam,0.9529411764705882,0.01388087153934532,67
+relu,"(32, 32)",adaptive,adam,0.9515151515151515,0.007253828858957489,70
+relu,"(32, 32)",constant,adam,0.9515151515151515,0.007253828858957489,70
+relu,"(32, 32)",invscaling,adam,0.9515151515151515,0.007253828858957489,70
+logistic,"(75, 50)",adaptive,sgd,0.9190730837789662,0.015192353477834255,73
+logistic,"(75, 50)",constant,sgd,0.9190730837789662,0.015192353477834255,73
+logistic,"(48, 16)",adaptive,sgd,0.9112299465240643,0.011239845112609252,75
+logistic,"(48, 16)",constant,sgd,0.9112299465240643,0.011239845112609252,75
+logistic,"(64, 32)",constant,sgd,0.8983957219251337,0.015943443689838094,77
+logistic,"(64, 32)",adaptive,sgd,0.8983957219251337,0.015943443689838094,77
+logistic,"(32, 32)",adaptive,sgd,0.8695187165775401,0.016468890499038994,79
+logistic,"(32, 32)",constant,sgd,0.8695187165775401,0.016468890499038994,79
+identity,"(75, 50)",invscaling,sgd,0.6420677361853833,0.013118267018163357,81
+identity,"(64, 32)",invscaling,sgd,0.6103386809269162,0.010965102673247577,82
+identity,"(48, 16)",invscaling,sgd,0.41711229946524064,0.01862723775773708,83
+identity,"(32, 32)",invscaling,sgd,0.3893048128342246,0.010611676339491784,84
+tanh,"(75, 50)",invscaling,sgd,0.3746880570409982,0.008976597726926324,85
+tanh,"(64, 32)",invscaling,sgd,0.364349376114082,0.021703003572512546,86
+tanh,"(32, 32)",invscaling,sgd,0.2655971479500891,0.010813369617185807,87
+relu,"(75, 50)",invscaling,sgd,0.25240641711229944,0.006029067566947509,88
+tanh,"(48, 16)",invscaling,sgd,0.21497326203208558,0.012584215753813044,89
+relu,"(48, 16)",invscaling,sgd,0.19928698752228163,0.0062158986717157525,90
+relu,"(32, 32)",invscaling,sgd,0.1700534759358289,0.007612890019273661,91
+relu,"(64, 32)",invscaling,sgd,0.16755793226381463,0.005287842058535236,92
+logistic,"(32, 32)",invscaling,sgd,0.11158645276292337,0.0008732583753237723,93
+logistic,"(75, 50)",invscaling,sgd,0.09839572192513371,0.007761690216426822,94
+logistic,"(48, 16)",invscaling,sgd,0.07557932263814617,0.0008732583753237723,95
+logistic,"(64, 32)",invscaling,sgd,0.07557932263814617,0.0008732583753237723,95
