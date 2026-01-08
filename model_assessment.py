@@ -356,10 +356,8 @@ def compare_best_models():
 
     # get list of kNN params
     knn_optimal_params = knn_results[['param_n_neighbors', 'param_metric']].iloc[0]
-
     knn_params = knn_optimal_params.to_list()
     knn_params[0] = int(knn_params[0])  # ensure k is int
-
     print(f"kNN Params: {knn_params}")
 
     # get list of MLP params
@@ -397,34 +395,34 @@ def compare_best_models():
     dt_y_pred = decision_tree_decision(dt, x_test)
 
     # get model accuracies
-    # knn_accuracy = metrics.accuracy_score(y_test, knn_y_pred)
+    knn_accuracy = metrics.accuracy_score(y_test, knn_y_pred)
     mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
     dt_accuracy = metrics.accuracy_score(y_test, dt_y_pred)
-    # print(f"KNN Accuracy: {knn_accuracy * 100:.2f}%")
+    print(f"KNN Accuracy: {knn_accuracy * 100:.2f}%")
     print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
     print(f"DT Accuracy: {dt_accuracy * 100:.2f}%")
 
     # get model precision
-    # knn_precision = metrics.precision_score(y_test, knn_y_pred, average="weighted")
+    knn_precision = metrics.precision_score(y_test, knn_y_pred, average="weighted")
     mlp_precision = metrics.precision_score(y_test, mlp_y_pred, average="weighted")
     dt_precision = metrics.precision_score(y_test, dt_y_pred, average="weighted")
-    # print(f"KNN Precision: {knn_precision * 100:.2f}%")
+    print(f"KNN Precision: {knn_precision * 100:.2f}%")
     print(f"MLP Precision: {mlp_precision * 100:.2f}%")
     print(f"DT Precision: {dt_precision * 100:.2f}%")
 
     # get model recall
-    # knn_recall = metrics.recall_score(y_test, knn_y_pred, average="weighted")
+    knn_recall = metrics.recall_score(y_test, knn_y_pred, average="weighted")
     mlp_recall = metrics.recall_score(y_test, mlp_y_pred, average="weighted")
     dt_recall = metrics.recall_score(y_test, dt_y_pred, average="weighted")
-    # print(f"KNN Recall: {knn_recall * 100:.2f}%")
+    print(f"KNN Recall: {knn_recall * 100:.2f}%")
     print(f"MLP Recall: {mlp_recall * 100:.2f}%")
     print(f"DT Recall: {dt_recall * 100:.2f}%")
 
     # get model f1 score
-    # knn_f1 = metrics.f1_score(y_test, knn_y_pred, average="weighted")
+    knn_f1 = metrics.f1_score(y_test, knn_y_pred, average="weighted")
     mlp_f1 = metrics.f1_score(y_test, mlp_y_pred, average="weighted")
     dt_f1 = metrics.f1_score(y_test, dt_y_pred, average="weighted")
-    # print(f"KNN F1 score: {knn_f1 * 100:.2f}%")
+    print(f"KNN F1 score: {knn_f1 * 100:.2f}%")
     print(f"MLP F1 score: {mlp_f1 * 100:.2f}%")
     print(f"DT F1 score: {dt_f1 * 100:.2f}%")
 
@@ -438,11 +436,10 @@ def compare_best_models():
     # - ROC Curve?
     # - Absolute Mean Error?
 
-    bar_x_models = ['MLP', 'DT']
+    bar_x_models = ['MLP', 'DT', 'kNN']
 
     # Accuracy comparison
-    bar_acc_x = ['MLP', 'DT']
-    bar_acc_y = [mlp_accuracy * 100, dt_accuracy * 100]
+    bar_acc_y = [mlp_accuracy * 100, dt_accuracy * 100, knn_accuracy * 100]
     plt.xlabel("Models")
     plt.ylabel("Accuracy")
     plt.ylim(90, 100)
@@ -450,13 +447,13 @@ def compare_best_models():
     # plt.xlim(0.2)
     # plt.figure(figsize=(5,5))
     plt.title("Comparison of Model Accuracy")
-    plt.bar(bar_acc_x, bar_acc_y, color='#E22929')
+    plt.bar(bar_x_models, bar_acc_y, color='#E22929')
     plt.savefig("graphs/models_accuracy")
     plt.show()
 
 
     # Precision comparison
-    bar_prec_y = [mlp_precision * 100, dt_precision * 100]
+    bar_prec_y = [mlp_precision * 100, dt_precision * 100, knn_precision * 100]
     plt.xlabel("Models")
     plt.ylabel("Precision")
     plt.ylim(88, 100)
@@ -468,7 +465,7 @@ def compare_best_models():
     plt.show()
 
     # Recall comparison
-    bar_recall_y = [mlp_recall * 100, dt_recall * 100]
+    bar_recall_y = [mlp_recall * 100, dt_recall * 100, knn_recall * 100]
     plt.xlabel("Models")
     plt.ylabel("Recall")
     plt.ylim(88, 100)
@@ -480,7 +477,7 @@ def compare_best_models():
     plt.show()
 
     # F1 score comparison
-    bar_f1_y = [mlp_f1 * 100, dt_f1 * 100]
+    bar_f1_y = [mlp_f1 * 100, dt_f1 * 100, knn_f1 * 100]
     plt.xlabel("Models")
     plt.ylabel("F1 Score")
     plt.ylim(88, 100)
@@ -492,7 +489,24 @@ def compare_best_models():
     plt.show()
 
     # create line chart to show all next to each other
+    x = np.arange(4)
+    y1 = [mlp_accuracy*100, mlp_precision*100, mlp_recall*100, mlp_f1*100]
+    y2 = [dt_accuracy*100, dt_precision*100, dt_recall*100, dt_f1*100]
+    y3 = [knn_accuracy*100, knn_precision*100, knn_recall*100, knn_f1*100]
+    width = 0.2
 
+    # plot data in grouped bar chart
+    plt.bar(x - 0.2, y1, width, color='cyan')
+    plt.bar(x, y2, width, color='orange')
+    plt.bar(x + 0.2, y3, width, color='green')
+    plt.ylim(90, 100)
+    plt.yticks(np.arange(90, 100, 0.5))
+    plt.xticks(x, ['Accuracy', 'Precision', 'Recall', 'F1'])
+    plt.xlabel("Models")
+    plt.ylabel("Percentage")
+    plt.legend(['MLP', 'DT', 'kNN'])
+    plt.savefig("graphs/models_group_bar")
+    plt.show()
 
 
     # subplot confussion matrix of mlp, dt and knn
@@ -506,7 +520,7 @@ def compare_best_models():
     dt_cm.plot(ax=ax[1])
     ax[1].set_title("DT")
 
-    knn_cm = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics.confusion_matrix(y_test, dt_y_pred)) # cahnge to have knn predicted
+    knn_cm = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics.confusion_matrix(y_test, knn_y_pred))
     knn_cm.plot(ax=ax[2])
     ax[2].set_title("kNN")
 

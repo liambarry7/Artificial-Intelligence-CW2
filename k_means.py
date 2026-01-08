@@ -23,7 +23,7 @@ def k_mean(X, y, k):
     cluster = KMeans(n_clusters=k).fit(X)
     
     predictions = cluster.predict(X)
-    
+
     centroids = cluster.cluster_centers_ 
     
     
