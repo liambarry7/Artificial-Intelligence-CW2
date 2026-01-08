@@ -250,8 +250,8 @@ def decision_tree_create(inputData, trainingData, SEED, params):
 
     dtree.fit(inputData, trainingData)
     
-    tree.plot_tree(dtree, node_ids=True)
-    
+    # tree.plot_tree(dtree, node_ids=True)
+
     return dtree
     
 def decision_tree_decision(dTree, item):
@@ -317,58 +317,7 @@ def mlp_predict(mlp, test_data):
 
 
 #Test harness
-#(Will probably neec redoing when training/test set split established)
-def test_harness_v1():
-    print("test test test")
-
-    #get dataset from csv 
-    df_raw = pd.read_csv("data_exports/hands.csv")
-    headings_to_drop = [
-        "HandID",
-        "Index",
-        "Score",
-        "Display_name",
-        "Category_name"
-    ]
-    df = df_raw.drop(columns=headings_to_drop)
-
-    #for test purposes, first x rows is enough
-    testSet = df.head(400)
-
-
-    #set test vector - "B"
-    testVector = [0.5260272026062012,0.8798593878746033,8.066103305282013e-07,0.648971676826477,0.8007062673568726,-0.10612288862466812,0.6956068277359009,0.6656842231750488,-0.1512143462896347,0.55511873960495,0.5598111152648926,-0.18335816264152527,0.42072534561157227,0.5272426009178162,-0.21615317463874817,0.6871981620788574,0.5141886472702026,-0.08991146087646484,0.6845777630805969,0.3669835031032562,-0.1447310745716095,0.663722574710846,0.2704240083694458,-0.19583235681056976,0.644425094127655,0.1782061755657196,-0.23714634776115417,0.5782393217086792,0.49545642733573914,-0.07831993699073792,0.5751457810401917,0.33191561698913574,-0.12287802994251251,0.5658273100852966,0.2260434329509735,-0.17544658482074738,0.5632388591766357,0.12253257632255554,-0.21993058919906616,0.4798363745212555,0.514907956123352,-0.07825557887554169,0.4656243920326233,0.3663085103034973,-0.1243739053606987,0.4678212106227875,0.2733611762523651,-0.17512254416942596,0.4704778492450714,0.18553045392036438,-0.21303467452526093,0.3802857995033264,0.5591152906417847,-0.08764268457889557,0.3679702579975128,0.4433458149433136,-0.12754051387310028,0.37508827447891235,0.3667985200881958,-0.15716932713985443,0.3830806016921997,0.29358887672424316,-0.18222753703594208]
-
-    #test kNN
-    kNN(testSet, testVector, 5)
-    #test decision tree
-    #test ... (our 3rd choice)
-    
-    print(df_raw.to_numpy())
-    
-    X = df_raw.drop(['Hand_sign'], axis=1)
-    X = X.drop(['Category_name', 'Display_name'], axis=1).to_numpy()
-    print(X)
-    y = df_raw['Hand_sign'].to_numpy()
-    print(y)
-    
-    decisionTree = decision_tree_create(X, y, 7107)
-    
-    correct = 0;
-    length = None;
-    
-    pred = decision_tree_decision(decisionTree, X)
-    
-    print(pred)
-    
-    for i in range(len(pred)):
-        if(pred[i] == y[i]):
-            correct += 1
-            length = i
-    
-    print(str(correct) + '/' + str(length))
-
-def test_harness_v2():
+def test_harness():
     # Get training and test data
     training_set, test_set = dataset_split()
     print(f"Columns: {training_set.columns}")
@@ -391,16 +340,15 @@ def test_harness_v2():
     print(f"kNN test: \nk = {k} \ntest input = {test_label}")
     print(kNN(training_set, test_vector, k))
 
-
-    # test run decision tree
-    decisionTree = decision_tree_create(x_train, y_train, 7107, params=["entropy", 10, 7, 8])
-    decision_tree_decision(decisionTree, x_test)
-    
-
-    # Test run MLP
-    mlp = multilayer_perceptron(x_train, y_train, params=["relu",(48, 16),"adaptive","sgd"])
-    mlp_predict(mlp, x_test)
+    # # test run decision tree
+    # decisionTree = decision_tree_create(x_train, y_train, 7107, params=["entropy", 10, 7, 8])
+    # decision_tree_decision(decisionTree, x_test)
+    #
+    #
+    # # Test run MLP
+    # mlp = multilayer_perceptron(x_train, y_train, params=["relu",(48, 16),"adaptive","sgd"])
+    # mlp_predict(mlp, x_test)
 
 
 if __name__ == '__main__':
-    test_harness_v2()
+    test_harness()
