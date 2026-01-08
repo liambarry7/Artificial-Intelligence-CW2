@@ -118,7 +118,7 @@ def data_extraction():
     print(df.head())
 
     # write df to csv
-    df.to_csv('hands.csv', mode='w', index=False)
+    df.to_csv('data_exports/hands.csv', mode='w', index=False)
 
 def test_harness():
     # test mediapipe functionality

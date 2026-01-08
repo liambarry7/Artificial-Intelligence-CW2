@@ -51,7 +51,7 @@ def test_model(model):
             print("Model not available.")
 
     # create summary graphs of hyperparameter comparison
-    model_results = ['dt_gridsearch_rs.csv', 'mlp_gridsearch_rs.csv']
+    model_results = ['data_exports/dt_gridsearch_rs.csv', 'data_exports/mlp_gridsearch_rs.csv']
     # model_results = ['mlp_gridsearch_rs.csv']
 
     # plot graphs to compare performance of top 50 combinations
@@ -88,7 +88,7 @@ def test_model(model):
     plt.title("Test")
     plt.show()
 
-    test = pd.read_csv('mlp_gridsearch_rs.csv')
+    test = pd.read_csv('data_exports/mlp_gridsearch_rs.csv')
     # sns.scatterplot(
     #     data=test,
     #     x='mean_test_score',
@@ -171,7 +171,7 @@ def mlp_fine_tuning(five_fold):
     results_df = results_df[['param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
     print(results_df.head())
 
-    results_df.to_csv('mlp_gridsearch_rs.csv', index=False)
+    results_df.to_csv('data_exports/mlp_gridsearch_rs.csv', index=False)
 
     # plot graphs to compare performance of top 50 combinations
     # x = mean, y = std
@@ -244,10 +244,21 @@ def decision_tree_fine_tuning(ff):
     results_df = results_df[['param_criterion', 'param_max_depth', 'param_min_samples_leaf', 'param_min_samples_split', 'mean_test_score', 'std_test_score', 'rank_test_score']].sort_values(by='rank_test_score')
     print(results_df.head())
 
-    results_df.to_csv('dt_gridsearch_rs.csv', index=False)
+    results_df.to_csv('data_exports/dt_gridsearch_rs.csv', index=False)
 
 
 def compare_best_models():
+    """
+        A function used to compare each classifier model with their best performing settings.
+
+
+        ------
+        inputs: n/a
+
+        ------
+        returns: n/a
+        """
+
     # PART 2C : 3,4
     # - retrain best models (best kNN, DT and MLP) on entire training set
     # then compare each one against each other
@@ -255,28 +266,26 @@ def compare_best_models():
 
     # get best params from csv files - first line as ranked
     # knn?
-    mlp_results = pd.read_csv("mlp_gridsearch_rs.csv")
-    dt_results = pd.read_csv("dt_gridsearch_rs.csv")
+    mlp_results = pd.read_csv("data_exports/mlp_gridsearch_rs.csv")
+    dt_results = pd.read_csv("data_exports/dt_gridsearch_rs.csv")
 
     # get list of kNN params
     #...
 
     # get list of MLP params
     mlp_optimal_params = mlp_results[['param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver']].iloc[0]
-    print(f"MLP Best Params: {mlp_optimal_params}")
-    print(f"MLP Best Params: {type(mlp_optimal_params)}")
+    # print(f"MLP Best Params: {mlp_optimal_params}")
     mlp_params = mlp_optimal_params.to_list()
-
-    # convert hidden_layer_sizes from string back into tuple
     import ast # https://www.geeksforgeeks.org/python/difference-between-eval-and-ast-literal-eval-in-python/
-    mlp_params[1] = ast.literal_eval(mlp_params[1])
-    print(mlp_params)
+    mlp_params[1] = ast.literal_eval(mlp_params[1]) # convert hidden_layer_sizes from string back into tuple
+    print(f"MLP Params: {mlp_params}")
 
     # get list of DT params
     dt_optimal_params = dt_results[['param_criterion', 'param_max_depth', 'param_min_samples_leaf', 'param_min_samples_split']].iloc[0]
-    print(f"DT Best Params: {dt_optimal_params}")
+    # print(f"DT Best Params: {dt_optimal_params}")
     dt_params = dt_optimal_params.to_list()
-    print(dt_params)
+    dt_params[1] = int(dt_params[1]) # convert max depth to int
+    print(f"DT Params: {dt_params}")
 
     # get training and test datasets
     training_set, test_set = dataset_split()
@@ -294,6 +303,16 @@ def compare_best_models():
     # get mlp accuracy
     mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
     print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
+
+    # get DT object
+    dt = decision_tree_create(x_train, y_train, 7107, dt_params)
+    dt_y_pred = decision_tree_decision(dt, x_test)
+
+    # get dt accuracy
+    dt_accuracy = metrics.accuracy_score(y_test, dt_y_pred)
+    print(f"DT Accuracy: {dt_accuracy * 100:.2f}%")
+
+
 
 
 

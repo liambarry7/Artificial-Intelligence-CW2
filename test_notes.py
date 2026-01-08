@@ -176,5 +176,5 @@ landmarker.close()
 print("2")
 
 import pandas as pd
-df = pd.read_csv("hands.csv")
+df = pd.read_csv("data_exports/hands.csv")
 print(df.head())

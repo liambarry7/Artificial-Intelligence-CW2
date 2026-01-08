@@ -25,7 +25,7 @@ def preprocess():
             returns a standardised dataset of hand landmark data ready for split into training/test sets
        """
 
-    df = pd.read_csv("hands.csv")
+    df = pd.read_csv("data_exports/hands.csv")
     print(df.head())
     print(df.info())
 
@@ -131,11 +131,11 @@ def preprocess():
     # re-work this
     hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
     print(hand_df_std)
-    # hand_df_standardised.to_csv('test.csv', mode='w', index=False)
+    # hand_df_standardised.to_csv('data_exports/.csv', mode='w', index=False)
 
     clean_df = hand_df_std.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign'], axis=1)
     print(clean_df)
-    # clean_df.to_csv('test.csv', mode='w', index=False)
+    # clean_df.to_csv('data_exports/test.csv', mode='w', index=False)
     return clean_df
 
 

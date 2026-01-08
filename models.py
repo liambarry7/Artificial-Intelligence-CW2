@@ -158,7 +158,7 @@ def kNN(dataset_df, input_vector, k):
     return (kNN_predict(dataset, input_vector, k))
 
 
-def decision_tree_create(inputData, trainingData, SEED):
+def decision_tree_create(inputData, trainingData, SEED, params):
     '''
     Creates a decision tree based on the data given
     
@@ -174,8 +174,9 @@ def decision_tree_create(inputData, trainingData, SEED):
     
     returns: decision tree as a sklearn tree
     '''
-    dtree = tree.DecisionTreeClassifier(random_state=SEED)
-    
+    # dtree = tree.DecisionTreeClassifier(random_state=SEED)
+    dtree = tree.DecisionTreeClassifier(criterion=params[0], max_depth=params[1], min_samples_leaf=params[2], min_samples_split=params[3], random_state=SEED)
+
     dtree.fit(inputData, trainingData)
     
     tree.plot_tree(dtree, node_ids=True)
@@ -196,6 +197,7 @@ def decision_tree_decision(dTree, item):
     returns: an array of what sign each given data point is 
     '''
     prediction = dTree.predict(item)
+    print(prediction)
     
     return prediction
 
@@ -239,15 +241,6 @@ def mlp_predict(mlp, test_data):
     y_pred = mlp.predict(test_data)
     print(y_pred)
 
-    # Example of testing a singular row for classification
-    # t_x = test_data.iloc[100]
-    # print(f"singular test data: {t_x}")
-    # tt_x = t_x.drop(['Encoded_sign']).to_numpy()
-    # tt_xr = tt_x.reshape(1, -1)
-    # idv_pred = mlp.predict(tt_xr)
-    # print(f"Class prediction: {idv_pred}")
-    # print(f"Actual class: {t_x['Encoded_sign']}")
-
     # return predicted classes
     return y_pred
 
@@ -258,7 +251,7 @@ def test_harness_v1():
     print("test test test")
 
     #get dataset from csv 
-    df_raw = pd.read_csv("hands.csv")
+    df_raw = pd.read_csv("data_exports/hands.csv")
     headings_to_drop = [
         "HandID",
         "Index",
@@ -329,7 +322,8 @@ def test_harness_v2():
 
 
     # test run decision tree
-    
+    decisionTree = decision_tree_create(x_train, y_train, 7107, params=["entropy", 10, 7, 8])
+    decision_tree_decision(decisionTree, x_test)
     
 
     # Test run MLP
