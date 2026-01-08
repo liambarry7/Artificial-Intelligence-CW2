@@ -68,7 +68,7 @@ def get_neighbours(dataset, input_vector, k):
         A list of tuples (same format as dataset) containing the k closest neighbours
     """
     
-    print("Searching for ", k, " nearest neighbours ...")
+    #print("Searching for ", k, " nearest neighbours ...")
 
     #create and populate a list of distances using euclidean function
     distances = []
@@ -156,6 +156,39 @@ def kNN(dataset_df, input_vector, k):
 
 
     return (kNN_predict(dataset, input_vector, k))
+
+def kNN_predict_batch(X, k):
+    """
+    Batch kNN function for finetuning purposes.
+    
+    Parameters
+    ----------
+
+    X : List
+        List of inputs for classification
+
+    k : int
+        Number of neighbours to be examined
+
+    Returns
+    -------
+
+    List of float
+        Handsign estimate as str - "A" = 0.0, "B" = 1.0, etc.
+    """
+
+    training_set, test_set = dataset_split()
+    #dataframe version of the dataset - needs to be converted to a list
+    data = training_set.values.tolist()
+    #dataset is now a list of lists of vectors however label needs to be removed from vector
+    #and added as a tuple
+    dataset = []
+    for row in data:
+        label = row[0]
+        features = row[1:]
+        dataset.append((features, label))
+
+    return [kNN_predict(dataset, x, k) for x in X]
 
 
 def decision_tree_create(inputData, trainingData, SEED, params):

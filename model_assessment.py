@@ -14,6 +14,7 @@ import pandas as pd
 from data_handling import dataset_split
 from models import *
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
+from sklearn.neighbors import KNeighborsClassifier
 import matplotlib.pyplot as plt
 
 def test_model(model):
@@ -40,7 +41,7 @@ def test_model(model):
     # switch case to select model
     match model:
         case 'knn':
-            pass
+            knn_fine_tuning(ff)
         case 'dt':
             decision_tree_fine_tuning(ff)
         case 'mlp':
@@ -96,6 +97,67 @@ def test_model(model):
 
 
 
+
+def knn_fine_tuning(ff):
+    """
+        A function used to test k Nearest Neighbours using 5 fold cross validation to
+        find its best hyperparameters
+
+        ------
+        inputs:
+            five_fold: provides the train/test indices to split into 5 train/test sets
+
+        ------
+        returns: N/A
+    """
+
+    # get dataset
+    training_set, test_set = dataset_split()
+
+    # split training set
+    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_train = training_set['Encoded_sign'].to_numpy()
+
+    # base knn model
+    knn = KNeighborsClassifier()
+
+    # baseline CV score (before tuning)
+    cv_accuracy_scores = cross_val_score(knn, x_train, y_train, cv=ff)
+    print(f"CV accuracy scores: {cv_accuracy_scores}")
+    print(f"Mean CV accuracy: {cv_accuracy_scores.mean()}")
+    print(f"Standard deviation: {cv_accuracy_scores.std()}")
+    
+    # parameter grid
+    param_grid = {
+        'n_neighbors': [1, 3, 5, 7, 9],
+        'weights': ['uniform', 'distance'],
+        'metric': ['euclidean', 'manhattan']
+    }
+
+    # grid search
+    knn_gridsearch = GridSearchCV(
+        knn,
+        param_grid,
+        cv=ff,
+        scoring='accuracy',
+        refit=True,
+        n_jobs=-1,
+        verbose=2
+    )
+
+    knn_gridsearch.fit(x_train, y_train)
+
+    print(f"Best kNN params: {knn_gridsearch.best_params_}")
+    print(f"Best kNN Accuracy Score: {knn_gridsearch.best_score_}")
+
+    # export results
+    results_df = pd.DataFrame(knn_gridsearch.cv_results_)
+    results_df = results_df[
+        ['param_n_neighbors', 'param_weights', 'param_metric',
+         'mean_test_score', 'std_test_score', 'rank_test_score']
+    ].sort_values(by='rank_test_score')
+
+    results_df.to_csv('data_exports/knn_gridsearch_rs.csv', index=False)
 
 def mlp_fine_tuning(five_fold):
     """
@@ -252,11 +314,17 @@ def compare_best_models():
 
     # get best params from csv files - first line as ranked
     # knn?
+    knn_results = pd.read_csv("data_exports/knn_gridsearch_rs.csv")
     mlp_results = pd.read_csv("data_exports/mlp_gridsearch_rs.csv")
     dt_results = pd.read_csv("data_exports/dt_gridsearch_rs.csv")
 
     # get list of kNN params
-    #...
+    knn_optimal_params = knn_results[['param_n_neighbors', 'param_weights', 'param_metric']].iloc[0]
+
+    knn_params = knn_optimal_params.to_list()
+    knn_params[0] = int(knn_params[0])  # ensure k is int
+
+    print(f"kNN Params: {knn_params}")
 
     # get list of MLP params
     mlp_optimal_params = mlp_results[['param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver']].iloc[0]
@@ -290,30 +358,39 @@ def compare_best_models():
     dt = decision_tree_create(x_train, y_train, 7107, dt_params)
 
     # get model predictions from test set
+    knn_y_pred = kNN_predict_batch(x_test, knn_params[0])
     mlp_y_pred = mlp_predict(mlp, x_test)
     dt_y_pred = decision_tree_decision(dt, x_test)
 
     # get model accuracies
+    knn_accuracy = metrics.accuracy_score(y_test, knn_y_pred)
     mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
     dt_accuracy = metrics.accuracy_score(y_test, dt_y_pred)
+    print(f"KNN Accuracy: {knn_accuracy * 100:.2f}%")
     print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
     print(f"DT Accuracy: {dt_accuracy * 100:.2f}%")
 
     # get model precision
+    knn_precision = metrics.precision_score(y_test, knn_y_pred, average="weighted")
     mlp_precision = metrics.precision_score(y_test, mlp_y_pred, average="weighted")
     dt_precision = metrics.precision_score(y_test, dt_y_pred, average="weighted")
+    print(f"KNN Precision: {knn_precision * 100:.2f}%")
     print(f"MLP Precision: {mlp_precision * 100:.2f}%")
     print(f"DT Precision: {dt_precision * 100:.2f}%")
 
     # get model recall
+    knn_recall = metrics.recall_score(y_test, knn_y_pred, average="weighted")
     mlp_recall = metrics.recall_score(y_test, mlp_y_pred, average="weighted")
     dt_recall = metrics.recall_score(y_test, dt_y_pred, average="weighted")
+    print(f"KNN Recall: {knn_recall * 100:.2f}%")
     print(f"MLP Recall: {mlp_recall * 100:.2f}%")
     print(f"DT Recall: {dt_recall * 100:.2f}%")
 
     # get model f1 score
+    knn_f1 = metrics.f1_score(y_test, knn_y_pred, average="weighted")
     mlp_f1 = metrics.f1_score(y_test, mlp_y_pred, average="weighted")
     dt_f1 = metrics.f1_score(y_test, dt_y_pred, average="weighted")
+    print(f"KNN F1 score: {knn_f1 * 100:.2f}%")
     print(f"MLP F1 score: {mlp_f1 * 100:.2f}%")
     print(f"DT F1 score: {dt_f1 * 100:.2f}%")
 
@@ -348,6 +425,7 @@ def test_harness():
     # - retrain best models (best kNN, DT and MLP) on on entire training set
     # - then compare each classifier
 
+    # test_model("knn")
     # test_model("mlp")
     # test_model("dt")
     # test_model("results")
