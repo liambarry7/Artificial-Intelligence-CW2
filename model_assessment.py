@@ -60,6 +60,10 @@ def test_model(model):
     # can be done by reading the csv file
     # include default hyperparam settings for baseline comparison
 
+    # look at box plots to compare mean, median and std of accuracy scores across multiple configurations
+
+    # parallel coordinates plot? - https://plotly.com/python/parallel-coordinates-plot/
+
     for results in model_results:
         results_df = pd.read_csv(results)
         print(results_df.head())
@@ -88,17 +92,6 @@ def test_model(model):
     plt.title("Test")
     plt.show()
 
-    test = pd.read_csv('data_exports/mlp_gridsearch_rs.csv')
-    # sns.scatterplot(
-    #     data=test,
-    #     x='mean_test_score',
-    #     y='std_test_score',
-    #     hue='param_activation',
-    #     palette=sns.color_palette("flare")
-    # )
-
-    plt.title("Test")
-    plt.show()
 
 
 
@@ -172,13 +165,6 @@ def mlp_fine_tuning(five_fold):
     print(results_df.head())
 
     results_df.to_csv('data_exports/mlp_gridsearch_rs.csv', index=False)
-
-    # plot graphs to compare performance of top 50 combinations
-    # x = mean, y = std
-    # colours for each hidden layer size, activation, learning rate etc
-    # can be done by reading the csv file
-    # include default hyperparam settings for baseline comparison
-
 
 
 def decision_tree_fine_tuning(ff):
@@ -258,7 +244,7 @@ def compare_best_models():
         ------
         returns: n/a
         """
-
+    print("\nComparing Classifier Models...")
     # PART 2C : 3,4
     # - retrain best models (best kNN, DT and MLP) on entire training set
     # then compare each one against each other
@@ -296,23 +282,50 @@ def compare_best_models():
     x_test = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
     y_test = test_set['Encoded_sign'].to_numpy() # labels
 
-    # get MLPClassifier object
+    # get kNN object
+    #...
+
+    # train models on whole training set
     mlp = multilayer_perceptron(x_train, y_train, mlp_params)
-    mlp_y_pred = mlp_predict(mlp, x_test)
-
-    # get mlp accuracy
-    mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
-    print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
-
-    # get DT object
     dt = decision_tree_create(x_train, y_train, 7107, dt_params)
+
+    # get model predictions from test set
+    mlp_y_pred = mlp_predict(mlp, x_test)
     dt_y_pred = decision_tree_decision(dt, x_test)
 
-    # get dt accuracy
+    # get model accuracies
+    mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
     dt_accuracy = metrics.accuracy_score(y_test, dt_y_pred)
+    print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
     print(f"DT Accuracy: {dt_accuracy * 100:.2f}%")
 
+    # get model precision
+    mlp_precision = metrics.precision_score(y_test, mlp_y_pred, average="weighted")
+    dt_precision = metrics.precision_score(y_test, dt_y_pred, average="weighted")
+    print(f"MLP Precision: {mlp_precision * 100:.2f}%")
+    print(f"DT Precision: {dt_precision * 100:.2f}%")
 
+    # get model recall
+    mlp_recall = metrics.recall_score(y_test, mlp_y_pred, average="weighted")
+    dt_recall = metrics.recall_score(y_test, dt_y_pred, average="weighted")
+    print(f"MLP Recall: {mlp_recall * 100:.2f}%")
+    print(f"DT Recall: {dt_recall * 100:.2f}%")
+
+    # get model f1 score
+    mlp_f1 = metrics.f1_score(y_test, mlp_y_pred, average="weighted")
+    dt_f1 = metrics.f1_score(y_test, dt_y_pred, average="weighted")
+    print(f"MLP F1 score: {mlp_f1 * 100:.2f}%")
+    print(f"DT F1 score: {dt_f1 * 100:.2f}%")
+
+    # https://scikit-learn.org/stable/api/sklearn.metrics.html
+    # Metrics to calculate and compare against:
+    # - Accuracy
+    # - Precision
+    # - Recall (sensitivity)
+    # - F1 score
+    # - Confusion Matrix
+    # - ROC Curve?
+    # - Absolute Mean Error?
 
 
 
