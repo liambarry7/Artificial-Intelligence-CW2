@@ -94,7 +94,7 @@ def tester():
     y_train = training_set['Encoded_sign'].to_numpy()
     
     #b_data = np.array([5.1,4.5])
-    
+
     #print(euclidean(data, b_data))
     
     kmeans(x_train, y_train, 10, 100)

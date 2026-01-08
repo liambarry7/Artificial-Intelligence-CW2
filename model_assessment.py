@@ -314,17 +314,15 @@ def compare_best_models():
 
     # get best params from csv files - first line as ranked
     # knn?
-    knn_results = pd.read_csv("data_exports/knn_gridsearch_rs.csv")
+    # knn_results = pd.read_csv("data_exports/knn_gridsearch_rs.csv")
     mlp_results = pd.read_csv("data_exports/mlp_gridsearch_rs.csv")
     dt_results = pd.read_csv("data_exports/dt_gridsearch_rs.csv")
 
     # get list of kNN params
-    knn_optimal_params = knn_results[['param_n_neighbors', 'param_weights', 'param_metric']].iloc[0]
-
-    knn_params = knn_optimal_params.to_list()
-    knn_params[0] = int(knn_params[0])  # ensure k is int
-
-    print(f"kNN Params: {knn_params}")
+    # knn_optimal_params = knn_results[['param_n_neighbors', 'param_weights', 'param_metric']].iloc[0]
+    # knn_params = knn_optimal_params.to_list()
+    # knn_params[0] = int(knn_params[0])  # ensure k is int
+    # print(f"kNN Params: {knn_params}")
 
     # get list of MLP params
     mlp_optimal_params = mlp_results[['param_activation', 'param_hidden_layer_sizes', 'param_learning_rate', 'param_solver']].iloc[0]
@@ -358,39 +356,39 @@ def compare_best_models():
     dt = decision_tree_create(x_train, y_train, 7107, dt_params)
 
     # get model predictions from test set
-    knn_y_pred = kNN_predict_batch(x_test, knn_params[0])
+    # knn_y_pred = kNN_predict_batch(x_test, knn_params[0])
     mlp_y_pred = mlp_predict(mlp, x_test)
     dt_y_pred = decision_tree_decision(dt, x_test)
 
     # get model accuracies
-    knn_accuracy = metrics.accuracy_score(y_test, knn_y_pred)
+    # knn_accuracy = metrics.accuracy_score(y_test, knn_y_pred)
     mlp_accuracy = metrics.accuracy_score(y_test, mlp_y_pred)
     dt_accuracy = metrics.accuracy_score(y_test, dt_y_pred)
-    print(f"KNN Accuracy: {knn_accuracy * 100:.2f}%")
+    # print(f"KNN Accuracy: {knn_accuracy * 100:.2f}%")
     print(f"MLP Accuracy: {mlp_accuracy * 100:.2f}%")
     print(f"DT Accuracy: {dt_accuracy * 100:.2f}%")
 
     # get model precision
-    knn_precision = metrics.precision_score(y_test, knn_y_pred, average="weighted")
+    # knn_precision = metrics.precision_score(y_test, knn_y_pred, average="weighted")
     mlp_precision = metrics.precision_score(y_test, mlp_y_pred, average="weighted")
     dt_precision = metrics.precision_score(y_test, dt_y_pred, average="weighted")
-    print(f"KNN Precision: {knn_precision * 100:.2f}%")
+    # print(f"KNN Precision: {knn_precision * 100:.2f}%")
     print(f"MLP Precision: {mlp_precision * 100:.2f}%")
     print(f"DT Precision: {dt_precision * 100:.2f}%")
 
     # get model recall
-    knn_recall = metrics.recall_score(y_test, knn_y_pred, average="weighted")
+    # knn_recall = metrics.recall_score(y_test, knn_y_pred, average="weighted")
     mlp_recall = metrics.recall_score(y_test, mlp_y_pred, average="weighted")
     dt_recall = metrics.recall_score(y_test, dt_y_pred, average="weighted")
-    print(f"KNN Recall: {knn_recall * 100:.2f}%")
+    # print(f"KNN Recall: {knn_recall * 100:.2f}%")
     print(f"MLP Recall: {mlp_recall * 100:.2f}%")
     print(f"DT Recall: {dt_recall * 100:.2f}%")
 
     # get model f1 score
-    knn_f1 = metrics.f1_score(y_test, knn_y_pred, average="weighted")
+    # knn_f1 = metrics.f1_score(y_test, knn_y_pred, average="weighted")
     mlp_f1 = metrics.f1_score(y_test, mlp_y_pred, average="weighted")
     dt_f1 = metrics.f1_score(y_test, dt_y_pred, average="weighted")
-    print(f"KNN F1 score: {knn_f1 * 100:.2f}%")
+    # print(f"KNN F1 score: {knn_f1 * 100:.2f}%")
     print(f"MLP F1 score: {mlp_f1 * 100:.2f}%")
     print(f"DT F1 score: {dt_f1 * 100:.2f}%")
 
@@ -404,6 +402,81 @@ def compare_best_models():
     # - ROC Curve?
     # - Absolute Mean Error?
 
+    bar_x_models = ['MLP', 'DT']
+
+    # Accuracy comparison
+    bar_acc_x = ['MLP', 'DT']
+    bar_acc_y = [mlp_accuracy * 100, dt_accuracy * 100]
+    plt.xlabel("Models")
+    plt.ylabel("Accuracy")
+    plt.ylim(90, 100)
+    plt.yticks(np.arange(90, 100, 0.5))
+    # plt.xlim(0.2)
+    # plt.figure(figsize=(5,5))
+    plt.title("Comparison of Model Accuracy")
+    plt.bar(bar_acc_x, bar_acc_y, color='#E22929')
+    plt.savefig("graphs/models_accuracy")
+    plt.show()
+
+
+    # Precision comparison
+    bar_prec_y = [mlp_precision * 100, dt_precision * 100]
+    plt.xlabel("Models")
+    plt.ylabel("Precision")
+    plt.ylim(88, 100)
+    plt.yticks(np.arange(88, 100, 0.5))
+    # plt.xlim(0.5)
+    plt.title("Comparison of Model Precision")
+    plt.bar(bar_x_models, bar_prec_y, color='#2DAAF3')
+    plt.savefig("graphs/models_precision")
+    plt.show()
+
+    # Recall comparison
+    bar_recall_y = [mlp_recall * 100, dt_recall * 100]
+    plt.xlabel("Models")
+    plt.ylabel("Recall")
+    plt.ylim(88, 100)
+    plt.yticks(np.arange(88, 100, 0.5))
+    # plt.xlim(0.5)
+    plt.title("Comparison of Model Recall")
+    plt.bar(bar_x_models, bar_recall_y, color='#DE40E4')
+    plt.savefig("graphs/models_recall")
+    plt.show()
+
+    # F1 score comparison
+    bar_f1_y = [mlp_f1 * 100, dt_f1 * 100]
+    plt.xlabel("Models")
+    plt.ylabel("F1 Score")
+    plt.ylim(88, 100)
+    plt.yticks(np.arange(88, 100, 0.5))
+    # plt.xlim(0.5)
+    plt.title("Comparison of Model F1 Score")
+    plt.bar(bar_x_models, bar_f1_y, color='#40E456')
+    plt.savefig("graphs/models_f1")
+    plt.show()
+
+    # create line chart to show all next to each other
+
+
+
+    # subplot confussion matrix of mlp, dt and knn
+    fig, ax = plt.subplots(1, 3, figsize=(15, 5))
+
+    mlp_cm = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics.confusion_matrix(y_test, mlp_y_pred))
+    mlp_cm.plot(ax=ax[0])
+    ax[0].set_title("MLP")
+
+    dt_cm = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics.confusion_matrix(y_test, dt_y_pred))
+    dt_cm.plot(ax=ax[1])
+    ax[1].set_title("DT")
+
+    knn_cm = metrics.ConfusionMatrixDisplay(confusion_matrix=metrics.confusion_matrix(y_test, dt_y_pred)) # cahnge to have knn predicted
+    knn_cm.plot(ax=ax[2])
+    ax[2].set_title("kNN")
+
+    plt.savefig("graphs/models_cm.png")
+    plt.tight_layout()
+    plt.show()
 
 
 def test_harness():
