@@ -5,7 +5,7 @@ Coursework 002 for: CMP-6058A Artificial Intelligence
 
 Script containing functions to preprocess the dataset
 
-@author: Liam
+@author: 100385358,
 @date:   19/12/2025
 
 """
@@ -26,16 +26,13 @@ def preprocess():
        """
 
     df = pd.read_csv("data_exports/hands.csv")
-    print(df.head())
-    print(df.info())
+    print(f"Initial hand landmark df: \n{df.head()}")
+    print(f"Initial hand landmark df info: \n{df.info()}")
+    print(f"Initial hand landmark df columns: \n{df.columns}")
+    print(f"Initial hand landmark df shape: {df.shape}")
 
-    # print(df.columns)
-    # 'HandID', 'Index', 'Score', 'Display_name', 'Category_name', 'hand_landmark_1'
-    # ...'hand_landmark_21, 'Hand_sign'
-
-    print(f"Hands r/l: \n{df['Category_name'].unique()}")
-    print(f"no of signs: \n{df['Hand_sign'].unique()}")
-    print(f"hand name and indexes: \n{df[df['Index']==1]['Category_name'].head()}")
+    print(f"Hands r/l: {df['Category_name'].unique()}")
+    print(f"No of signs: {df['Hand_sign'].unique()}")
 
     # Visualise initial hand and sign count statistics
     hand_count = df.groupby('Category_name').size().reset_index(name="count")
@@ -48,40 +45,28 @@ def preprocess():
     signY = sign_count['count'].to_numpy()
     # visualise("bar", signX, signY)
 
-
-
-
     # drop duplicates - removes duplicated rows based on all columns
     hand_df = df.drop_duplicates()
-    print(hand_df)
+    print(f"Hand landmark df shape (duplicates removed): {hand_df.shape}")
 
     # remove unneeded columns, rename column
-    ''' CHECk IF WORLD LANDMARKS ARE NEEDED'''
     hand_df = hand_df.drop(columns=['Index', 'Display_name']).rename(columns={'Category_name': 'Hand_class'})
-    # hand_df = hand_df.drop(columns=['Index', 'Display_name', 'world_hand_landmark_1', 'world_hand_landmark_2',
-    #                                 'world_hand_landmark_3', 'world_hand_landmark_4', 'world_hand_landmark_5',
-    #                                 'world_hand_landmark_6', 'world_hand_landmark_7', 'world_hand_landmark_8',
-    #                                 'world_hand_landmark_9', 'world_hand_landmark_10', 'world_hand_landmark_11',
-    #                                 'world_hand_landmark_12', 'world_hand_landmark_13', 'world_hand_landmark_14',
-    #                                 'world_hand_landmark_15', 'world_hand_landmark_16', 'world_hand_landmark_17',
-    #                                 'world_hand_landmark_18', 'world_hand_landmark_19', 'world_hand_landmark_20',
-    #                                 'world_hand_landmark_21']).rename(columns={'Category_name': 'Hand_class'})
-    print(f"Columns: {hand_df.columns}")
+    print(f"Hand landmark df adjusted columns: {hand_df.columns}")
 
     # remove rows with missing values
     hand_df = hand_df.dropna()
-    print(hand_df.info())
+    print(f"Hand landmark df shape (missing value rows removed): {hand_df.shape}")
 
     print(f"Left hands: {hand_df[hand_df['Hand_class'] == 'Left']}")
 
     # remove any left hands - select all rows where hand is not left
     hand_df = hand_df[hand_df['Hand_class'] != "Left"].reset_index(drop=True) # reset index for missing rows
-    print(f"Left hands removed: {hand_df['Hand_class'].unique()}")
+    # print(f"Left hands removed: {hand_df['Hand_class'].unique()}")
 
     # Data encoding
     hand_df['Encoded_sign'] = hand_df['Hand_sign'].astype('category').cat.codes
     print(f"Encoded data: {hand_df.sample(10).head()}")
-    print(f"Count of hand (encoded) signs: {hand_df.groupby(['Hand_sign', 'Encoded_sign']).size().reset_index(name='Count')}")
+    print(f"Count of hand (encoded) signs: \n{hand_df.groupby(['Hand_sign', 'Encoded_sign']).size().reset_index(name='Count')}")
 
     # data normalisation
     print(f"Hand score max: {hand_df['Score'].max()}\nHand score min: {hand_df['Score'].min()}") # dont think this needs/should be normalised
@@ -92,20 +77,14 @@ def preprocess():
 
     for i in range(21):
         for axis in ['X', 'Y', 'Z']:
-            print(f"landmark{i+1} total : {hand_df[f'Hand_landmark_X{i+1}'].sum()}")
-            print(f"landmark{i+1} mean : {np.mean(hand_df[f'Hand_landmark_X{i+1}'])}")
-            print(f"landmark{i+1} std : {np.std(hand_df[f'Hand_landmark_X{i+1}'])}")
+            # print(f"landmark{i+1} total : {hand_df[f'Hand_landmark_X{i+1}'].sum()}")
+            # print(f"landmark{i+1} mean : {np.mean(hand_df[f'Hand_landmark_X{i+1}'])}")
+            # print(f"landmark{i+1} std : {np.std(hand_df[f'Hand_landmark_X{i+1}'])}")
 
             hand_df_standardised[f'Hand_landmark_{axis}{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_{axis}{i + 1}'])
-            # hand_df_standardised[f'Hand_landmark_X{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_X{i + 1}'])
-            # hand_df_standardised[f'Hand_landmark_Y{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_Y{i + 1}'])
-            # hand_df_standardised[f'Hand_landmark_Z{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_Z{i + 1}'])
 
-    # hand_df_standardised[['Hand_sign', 'Encoded_sign']] = hand_df[['Hand_sign', 'Encoded_sign']].copy()
-    print(f"Standardised df columns: {hand_df_standardised.columns}")
-    print(f"Standardised df : {hand_df_standardised.sample(10).head()}")
-    # print(hand_df_standardised[hand_df_standardised['Hand_class'] == 'Left'])
-
+    print(f"Standardised df columns: \n{hand_df_standardised.columns}")
+    print(f"Standardised df : \n{hand_df_standardised.sample(10).head()}")
 
     # outlier removal
     # zscores - check within x standard deviations
@@ -120,22 +99,20 @@ def preprocess():
         outliers = pd.concat([outliers_X, outliers_Y], axis=0)
         outliers = pd.concat([outliers, outliers_Z], axis=0)
 
-    print(f"outliers X: {outliers_X}")
-    print(f"outliers Y: {outliers_Y}")
-    print(f"outliers Z: {outliers_Z}")
+    # print(f"outliers X: {outliers_X}")
+    # print(f"outliers Y: {outliers_Y}")
+    # print(f"outliers Z: {outliers_Z}")
     print(f"outliers: {outliers.head()}")
 
     # drop outliers by matching ids from outlier df
     outlier_handID = outliers['HandID'].to_numpy()
 
-    # re-work this
     hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
     print(hand_df_std)
-    # hand_df_standardised.to_csv('data_exports/.csv', mode='w', index=False)
 
     clean_df = hand_df_std.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign'], axis=1)
-    print(clean_df)
-    # clean_df.to_csv('data_exports/test.csv', mode='w', index=False)
+    print(clean_df.sample(10).head())
+    clean_df.to_csv('data_exports/hands_cleaned_df_example.csv', mode='w', index=False)
     return clean_df
 
 
@@ -183,7 +160,6 @@ def visualise(chart_type, x, y):
     plt.show()
 
 def test_harness():
-    print("test test test")
     preprocess()
     # dataset_split()
 

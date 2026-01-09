@@ -6,7 +6,7 @@ Coursework 002 for: CMP-6058A Artificial Intelligence
 Using Googles' MediaPipe to get datapoints from an image of a hand
 and save to CSV
 
-@author: Liam
+@author: 100385358,
 @date:   19/12/2025
 
 """
@@ -15,7 +15,6 @@ import pandas as pd
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import os
-import csv
 
 def data_extraction():
     # Setup HandLandmarker
@@ -33,9 +32,9 @@ def data_extraction():
     landmarker = HandLandmarker.create_from_options(options)
 
     #Liam's location:
-    #ds_location = r"D:\kimia\Documents\University\UEA\AI\cw2_ds\CW2_dataset_final"
+    ds_location = r"D:\kimia\Documents\University\UEA\AI\cw2_ds\CW2_dataset_final"
     #Chris's location:
-    ds_location = r"C:\Users\chris\Desktop\AI_CW2\CW2_dataset_final"
+    # ds_location = r"C:\Users\chris\Desktop\AI_CW2\CW2_dataset_final"
 
     hand_count = 0
     hands = []
@@ -59,27 +58,6 @@ def data_extraction():
                     # only accept imgs that are readable by mediapipe
                     if hand_landmarker_result.hand_landmarks:
                         # Add handedness to dict
-                        '''REWORK THIS FOR BETTER CSV'''
-
-                        # handness = hand_landmarker_result.handedness[0][0]
-                        # hand = {"HandID": hand_count, "Index": handness.index, "Score": handness.score,
-                        #         "Display_name": handness.display_name, "Category_name": handness.category_name}
-                        #
-                        # # add all attributes to dictionary
-                        # for i in range(len(hand_landmarker_result.hand_landmarks[0])):
-                        #     # add hand landmarks to dict
-                        #     hand_landmark = hand_landmarker_result.hand_landmarks[0][i]
-                        #     hand[f"Hand_landmark_{i+1}"] = [hand_landmark.x, hand_landmark.y, hand_landmark.z,
-                        #                                   hand_landmark.visibility, hand_landmark.presence, hand_landmark.name]
-                        #     # add world landmarks to dict
-                        #     world_landmark = hand_landmarker_result.hand_world_landmarks[0][i]
-                        #     hand[f"World_hand_landmark_{i+1}"] = [world_landmark.x, world_landmark.y, world_landmark.z,
-                        #                                         world_landmark.visibility, world_landmark.presence,
-                        #                                         world_landmark.name]
-                        #
-                        # hand["Hand_sign"] = img[0]  # get first letter of file name = sign class
-
-                        '''------------------------'''
                         handness = hand_landmarker_result.handedness[0][0]
                         hand = {"HandID": hand_count, "Index": handness.index, "Score": handness.score,
                                 "Display_name": handness.display_name, "Category_name": handness.category_name}
@@ -105,13 +83,6 @@ def data_extraction():
 
     print(f"Total items: {hand_count}")
     landmarker.close()
-
-    # write to csv file
-    # with open('hands.csv', 'w', newline='') as csvfile:
-    #     fieldnames = list(hands[0].keys())
-    #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    #     writer.writeheader()
-    #     writer.writerows(hands)
 
     # create df from dict
     df = pd.DataFrame(hands)
@@ -219,5 +190,5 @@ def test_harness():
     landmarker.close()
 
 if __name__ == '__main__':
-    data_extraction()
-    # test_harness()
+    # data_extraction()
+    test_harness()

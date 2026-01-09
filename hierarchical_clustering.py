@@ -1,3 +1,14 @@
+# -*- coding: utf-8 -*-
+"""
+Practical assignment on supervised and unsupervised learning
+Coursework 002 for: CMP-6058A Artificial Intelligence
+
+Script containing a hierarchical clustering model
+
+@author: 100385358,
+@date:   05/01/2026
+
+"""
 from matplotlib import pyplot as plt
 from scipy.cluster.hierarchy import linkage, dendrogram
 

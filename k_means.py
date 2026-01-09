@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jan  7 15:43:52 2026
+Practical assignment on supervised and unsupervised learning
+Coursework 002 for: CMP-6058A Artificial Intelligence
 
-@author: james
+Script containing a k-means clustering model
+
+@author: James
+@date:   07/01/2026
+
 """
 
 from data_handling import dataset_split
