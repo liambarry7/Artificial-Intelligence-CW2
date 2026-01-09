@@ -17,6 +17,21 @@ from mediapipe.tasks.python import vision
 import os
 
 def data_extraction():
+    """
+        A function used to extract data from Google's MediaPipe to
+        collect hand landmark datapoints from a dataset of hand images.
+
+        Save the extracted data into a Pandas DataFrame, which is then
+        saved to a CSV file for future access
+
+        ------
+        inputs:
+            n/a
+
+        ------
+        returns:
+            n/a
+        """
     # Setup HandLandmarker
     model_path = "HandModel/hand_landmarker.task"
     BaseOptions = python.BaseOptions

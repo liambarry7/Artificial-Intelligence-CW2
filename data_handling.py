@@ -77,10 +77,6 @@ def preprocess():
 
     for i in range(21):
         for axis in ['X', 'Y', 'Z']:
-            # print(f"landmark{i+1} total : {hand_df[f'Hand_landmark_X{i+1}'].sum()}")
-            # print(f"landmark{i+1} mean : {np.mean(hand_df[f'Hand_landmark_X{i+1}'])}")
-            # print(f"landmark{i+1} std : {np.std(hand_df[f'Hand_landmark_X{i+1}'])}")
-
             hand_df_standardised[f'Hand_landmark_{axis}{i + 1}_standard_units'] = z_score(hand_df[f'Hand_landmark_{axis}{i + 1}'])
 
     print(f"Standardised df columns: \n{hand_df_standardised.columns}")
@@ -99,9 +95,6 @@ def preprocess():
         outliers = pd.concat([outliers_X, outliers_Y], axis=0)
         outliers = pd.concat([outliers, outliers_Z], axis=0)
 
-    # print(f"outliers X: {outliers_X}")
-    # print(f"outliers Y: {outliers_Y}")
-    # print(f"outliers Z: {outliers_Z}")
     print(f"outliers: {outliers.head()}")
 
     # drop outliers by matching ids from outlier df

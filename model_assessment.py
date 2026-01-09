@@ -28,15 +28,9 @@ def test_model(model):
         ------
         returns: n/a
         """
-    print(model)
-
-    #https://www.geeksforgeeks.org/machine-learning/cross-validation-machine-learning/
-    #https://www.geeksforgeeks.org/machine-learning/k-fold-cross-validation-in-machine-learning/
 
     # split dataset into 5 fold
     ff = StratifiedKFold(n_splits=5, shuffle=True, random_state=41) # use StratifiedKFold to avoid imbalanced class distribution
-    # ff = KFold(n_splits=5, shuffle=True, random_state=41)
-    # ff = KFold(n_splits=5, shuffle=False)
 
     # switch case to select model
     match model:
@@ -52,7 +46,7 @@ def test_model(model):
             print("Model not available.")
 
     # create summary graphs of hyperparameter comparison
-    model_results = ['data_exports/dt_gridsearch_rs.csv', 'data_exports/mlp_gridsearch_rs.csv']
+    model_results = ['data_exports/dt_gridsearch_rs.csv', 'data_exports/mlp_gridsearch_rs.csv', 'data_exports/knn_gridsearch_rs.csv']
     # model_results = ['mlp_gridsearch_rs.csv']
 
     # plot graphs to compare performance of top 50 combinations
@@ -65,6 +59,8 @@ def test_model(model):
 
     # parallel coordinates plot? - https://plotly.com/python/parallel-coordinates-plot/
 
+    # Compare all variations of all model's accuracy
+    # ---> WORK OUT HOW TO INCLUDE BASE MODELS IN THIS
     for results in model_results:
         results_df = pd.read_csv(results)
         print(results_df.head())
@@ -75,49 +71,53 @@ def test_model(model):
 
         plt.scatter(x_values, y_values)
 
+    plt.xlabel('Model Mean Accuracy Score')
+    plt.ylabel('Model STD Accuracy Score')
+    plt.title('All DT, MLP & kNN Models Accuracy Comparison')
+    plt.legend(['DT', 'MLP', 'kNN'])
     plt.show()
 
-    import seaborn as sns
-    colours = ["flare", "crest"]
-    for results in range(len(model_results)):
-        results_df = pd.read_csv(model_results[results])
+    # import seaborn as sns
+    # colours = ["flare", "crest"]
+    # for results in range(len(model_results)):
+    #     results_df = pd.read_csv(model_results[results])
+    #
+    #     sns.scatterplot(
+    #         data=results_df,
+    #         x='mean_test_score',
+    #         y='std_test_score',
+    #         hue='rank_test_score',
+    #         palette=sns.color_palette(colours[results], as_cmap=True)
+    #     )
+    #
+    # plt.title("Test")
+    # plt.show()
 
-        sns.scatterplot(
-            data=results_df,
-            x='mean_test_score',
-            y='std_test_score',
-            hue='rank_test_score',
-            palette=sns.color_palette(colours[results], as_cmap=True)
-        )
+    # parallel coordinates plot graph
+    import plotly.express as px
 
-    plt.title("Test")
-    plt.show()
+    # encode non-numeric columns
+    mlp_results = pd.read_csv(model_results[1])
+    mlp_results['param_activation_en'] = mlp_results['param_activation'].astype('category').cat.codes
+    mlp_results['param_hidden_layer_sizes_en'] = mlp_results['param_hidden_layer_sizes'].astype('category').cat.codes
+    mlp_results['param_learning_rate_en'] = mlp_results['param_learning_rate'].astype('category').cat.codes
+    mlp_results['param_solver_en'] = mlp_results['param_solver'].astype('category').cat.codes
+    print(mlp_results[['param_activation', 'param_activation_en']].sample(10).head(10))
+    print(mlp_results[['param_hidden_layer_sizes', 'param_hidden_layer_sizes_en']].sample(10).head(10))
+    print(mlp_results[['param_learning_rate', 'param_learning_rate_en']].sample(10).head(10))
+    print(mlp_results[['param_solver', 'param_solver_en']].sample(10).head(10))
 
+    fig = px.parallel_coordinates(mlp_results, color="rank_test_score",
+                                  dimensions=["param_activation_en", "param_hidden_layer_sizes_en",
+                                              "param_learning_rate_en", "param_solver_en", "rank_test_score"],
+                                  labels={"rank_test_score": "ranke",
+                                          "param_activation_en": "activation", "param_hidden_layer_sizes_en": "hidden layer",
+                                          "param_learning_rate_en": "lr", "param_solver_en": "solver"},
+                                  color_continuous_scale=px.colors.diverging.Tealrose,
+                                  color_continuous_midpoint=len(mlp_results) /2
+                                  )
+    fig.show()
 
-
-
-def ffcv_knn(X, y, k, distance_metric):
-    """
-    Five fold cross validation - takes a dataset and hyperparameters and checks
-    accuracy by splitting the dataset into 5 folds to perform cross validation
-    with given hyperparameters
-    
-    Parameters
-    ----------
-
-    X
-        Dataset - unlabelled
-    
-    y
-        Dataset labels
-    
-    k : int
-        'k' hyperparameter to be used by kNN
-
-    distance_metric : str
-        Distance metric to be used by kNN
-    """
-    return NotImplemented
 
 def knn_fine_tuning(ff):
     """
@@ -344,10 +344,6 @@ def compare_best_models():
         returns: n/a
         """
     print("\nComparing Classifier Models...")
-    # PART 2C : 3,4
-    # - retrain best models (best kNN, DT and MLP) on entire training set
-    # then compare each one against each other
-    # return the best model with their parameters
 
     # get best params from csv files - first line as ranked
     knn_results = pd.read_csv("data_exports/knn_gridsearch_rs.csv")
@@ -446,7 +442,8 @@ def compare_best_models():
     plt.yticks(np.arange(90, 100, 0.5))
     # plt.xlim(0.2)
     # plt.figure(figsize=(5,5))
-    plt.title("Comparison of Model Accuracy")
+    add_labels(bar_x_models, bar_acc_y)
+    plt.title("Comparison of Fine-Tuned Models' Accuracy")
     plt.bar(bar_x_models, bar_acc_y, color='#E22929')
     plt.savefig("graphs/models_accuracy")
     plt.show()
@@ -459,7 +456,8 @@ def compare_best_models():
     plt.ylim(88, 100)
     plt.yticks(np.arange(88, 100, 0.5))
     # plt.xlim(0.5)
-    plt.title("Comparison of Model Precision")
+    add_labels(bar_x_models, bar_prec_y)
+    plt.title("Comparison of Fine-Tuned Models' Precision")
     plt.bar(bar_x_models, bar_prec_y, color='#2DAAF3')
     plt.savefig("graphs/models_precision")
     plt.show()
@@ -471,7 +469,8 @@ def compare_best_models():
     plt.ylim(88, 100)
     plt.yticks(np.arange(88, 100, 0.5))
     # plt.xlim(0.5)
-    plt.title("Comparison of Model Recall")
+    add_labels(bar_x_models, bar_recall_y)
+    plt.title("Comparison of Fine-Tuned Models' Recall")
     plt.bar(bar_x_models, bar_recall_y, color='#DE40E4')
     plt.savefig("graphs/models_recall")
     plt.show()
@@ -483,7 +482,8 @@ def compare_best_models():
     plt.ylim(88, 100)
     plt.yticks(np.arange(88, 100, 0.5))
     # plt.xlim(0.5)
-    plt.title("Comparison of Model F1 Score")
+    add_labels(bar_x_models, bar_f1_y)
+    plt.title("Comparison of Fine-Tuned Models' F1 Scores")
     plt.bar(bar_x_models, bar_f1_y, color='#40E456')
     plt.savefig("graphs/models_f1")
     plt.show()
@@ -502,8 +502,9 @@ def compare_best_models():
     plt.ylim(90, 100)
     plt.yticks(np.arange(90, 100, 0.5))
     plt.xticks(x, ['Accuracy', 'Precision', 'Recall', 'F1'])
-    plt.xlabel("Models")
+    plt.xlabel("Metrics")
     plt.ylabel("Percentage")
+    plt.title("Fine-Tuned Models' Metric Comparison")
     plt.legend(['MLP', 'DT', 'kNN'])
     plt.savefig("graphs/models_group_bar")
     plt.show()
@@ -527,6 +528,26 @@ def compare_best_models():
     plt.savefig("graphs/models_cm.png")
     plt.tight_layout()
     plt.show()
+
+def add_labels(x,y):
+    """
+        Uses to add labels above bars in bar graphs
+
+        ------
+        inputs:
+            x: list of x values in bar graph
+
+            y: list of y values in bar graph
+
+        ------
+        returns:
+            n/a
+        """
+    for i in range(len(x)):
+        plt.text(i, y[i], f"{round(y[i], 2)}%", ha='center')
+
+def compare_clustering():
+    pass
 
 
 def test_harness():
@@ -552,7 +573,6 @@ def test_harness():
     # test_model("mlp")
     # test_model("dt")
     # test_model("results")
-
 
     compare_best_models()
 

@@ -20,6 +20,18 @@ from collections import Counter
 
 
 def agglomerative_clustering():
+    """
+        A function used to create a hierarchical clusting algorithm, and
+        return its clustering accuracy against the actual labels
+
+        ------
+        inputs:
+            n/a
+
+        ------
+        returns:
+            clustering accuracy score
+        """
     # get dataset
     training_set, test_set = dataset_split()
     x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
@@ -46,6 +58,7 @@ def agglomerative_clustering():
 
     accuracy = accuracy_score(y_train, y_pred)
     print(f"Hierarchical clustering accuracy: {accuracy * 100:.2f}%")
+    return accuracy
 
 def test_harness():
     agglomerative_clustering()
