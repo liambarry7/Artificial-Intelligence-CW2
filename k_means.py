@@ -15,7 +15,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.metrics import accuracy_score
-import random
 from scipy import stats
 
 
@@ -106,7 +105,7 @@ def find_k(data, start, repeats, offset):
     plt.figure()
     plt.plot(k, loss)
 
-def accuracy(guess, answer):
+def kmeans_accuracy(guess, answer):
     '''
     gives accuracy score of the k-means algoritm
     
@@ -139,7 +138,7 @@ def tester():
     
     print(count, "/", len(answers))
     
-    print(accuracy(values, answers))
+    print(kmeans_accuracy(values, answers))
     
     #find_k(x_train, 10, 50, 20)
     #found 150 to be optimum

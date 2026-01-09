@@ -13,6 +13,8 @@ import pandas as pd
 
 from data_handling import dataset_split
 from models import *
+from k_means import k_mean, find_k_means, kmeans_accuracy
+from hierarchical_clustering import agglomerative_clustering
 from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
@@ -547,7 +549,40 @@ def add_labels(x,y):
         plt.text(i, y[i], f"{round(y[i], 2)}%", ha='center')
 
 def compare_clustering():
-    pass
+    training_set, test_set = dataset_split()
+
+    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_train = training_set['Encoded_sign'].to_numpy()
+
+    # get k means accuracy
+    mean = k_mean(x_train, y_train, 150)
+
+    item = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    answers = test_set['Encoded_sign'].to_numpy()
+
+    values = find_k_means(mean, item)
+
+    kmean_accuracy = kmeans_accuracy(values, answers)
+
+    # get hierarchical clustering accuracy
+    agglomerative_clustering_acc = agglomerative_clustering()
+
+    print(f"k-Means Accuracy: {kmean_accuracy}")
+    print(f"Agglomerative Clustering Accuracy: {agglomerative_clustering_acc}")
+
+    bar_x_models = ['k-Means', 'Agglomerative Clustering']
+    bar_acc_y = [kmean_accuracy * 100, agglomerative_clustering_acc * 100]
+    plt.xlabel("Models")
+    plt.ylabel("Accuracy")
+    plt.ylim(50, 100)
+    plt.yticks(np.arange(50, 100, 2))
+    # plt.xlim(0.2)
+    # plt.figure(figsize=(5,5))
+    add_labels(bar_x_models, bar_acc_y)
+    plt.title("Comparison of Fine-Tuned Models' Accuracy")
+    plt.bar(bar_x_models, bar_acc_y, color='#d6e016')
+    plt.savefig("graphs/clustering_models_accuracy")
+    plt.show()
 
 
 def test_harness():
@@ -574,7 +609,9 @@ def test_harness():
     # test_model("dt")
     # test_model("results")
 
-    compare_best_models()
+    # compare_best_models()
+
+    compare_clustering()
 
 if __name__ == '__main__':
     test_harness()

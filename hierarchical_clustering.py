@@ -57,7 +57,7 @@ def agglomerative_clustering():
     y_pred = np.array([cluster_to_label[c] for c in y_clusters])
 
     accuracy = accuracy_score(y_train, y_pred)
-    print(f"Hierarchical clustering accuracy: {accuracy * 100:.2f}%")
+    # print(f"Hierarchical clustering accuracy: {accuracy * 100:.2f}%")
     return accuracy
 
 def test_harness():
