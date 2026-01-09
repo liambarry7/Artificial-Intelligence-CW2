@@ -5,7 +5,7 @@ Coursework 002 for: CMP-6058A Artificial Intelligence
 
 Script containing a k-means clustering model
 
-@author: James
+@author: 100426089
 @date:   07/01/2026
 
 """
@@ -24,6 +24,14 @@ def euclidean(a, b):
     return np.sqrt(np.sum((a - b) ** 2, axis =1))
     
 def k_mean(X, y, k):
+    '''
+    K means algorithm to make the cluster and centroids
+    X: inital training data
+    y: answers to which each point is
+    k: amount of centroids
+    
+    returns: centroid map
+    '''
     
     cluster = KMeans(n_clusters=k).fit(X)
     
@@ -51,6 +59,15 @@ def k_mean(X, y, k):
 
 
 def find_k_means(cluster, item):
+    '''
+    shows what sign a set of poins are based on a given centroid map
+    cluster : Array of centroids and corrsponding sign
+    item : Array of points to be clasified
+
+    Returns
+    -------
+    signs : array of signs as given by the centroid map
+    '''
     centroids = []
     
     for c in cluster:
@@ -66,13 +83,19 @@ def find_k_means(cluster, item):
     return signs
     
 
-def find_k(data, start):
+def find_k(data, start, repeats, offset):
+    '''
+    Find k means given a start value
+    data: information to be given
+    start: the starting k
+    repeats: the amount it loops through
+    offset: the amount it jusps up in
+    '''
     
     k = []
     loss = []
-    offset = 20
     
-    for i in range(50):
+    for i in range(repeats):
         print(i)
         cluster = k_mean(data, start + i*offset)
         k.append(i + i*offset)
@@ -90,7 +113,7 @@ def tester():
     x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
     y_train = training_set['Encoded_sign'].to_numpy()
     
-    mean = k_mean(x_train, y_train, 175)
+    mean = k_mean(x_train, y_train, 150)
     
     item = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
     answers = test_set['Encoded_sign'].to_numpy()
@@ -104,10 +127,9 @@ def tester():
             count += 1
     
     print(count, "/", len(answers))
-        
     
-    
-
+    #find_k(x_train, 10, 50, 20)
+    #found 150 to be optimum
     
 if __name__ == '__main__':
     tester()
