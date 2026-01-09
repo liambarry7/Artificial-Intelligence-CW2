@@ -5,7 +5,7 @@ Coursework 002 for: CMP-6058A Artificial Intelligence
 
 Script containing different classification models
 
-@author: 100385358,
+@author: 100385358, 100428904, 
 @date:   19/12/2025
 
 """

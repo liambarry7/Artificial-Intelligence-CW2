@@ -5,7 +5,7 @@ Coursework 002 for: CMP-6058A Artificial Intelligence
 
 Script containing the analysis of different classification models
 
-@author: 100385358,
+@author: 100385358, 100428904, 
 @date:   05/01/2026
 
 """
