@@ -154,7 +154,7 @@ def visualise(chart_type, x, y):
 
 def test_harness():
     preprocess()
-    # dataset_split()
+    dataset_split()
 
 if __name__ == '__main__':
     test_harness()

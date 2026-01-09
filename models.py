@@ -343,14 +343,14 @@ def test_harness():
     print(f"kNN test: \nk = {k} \ntest input = {test_label}")
     print(kNN(training_set, test_vector, k))
 
-    # # test run decision tree
-    # decisionTree = decision_tree_create(x_train, y_train, 7107, params=["entropy", 10, 7, 8])
-    # decision_tree_decision(decisionTree, x_test)
-    #
-    #
-    # # Test run MLP
-    # mlp = multilayer_perceptron(x_train, y_train, params=["relu",(48, 16),"adaptive","sgd"])
-    # mlp_predict(mlp, x_test)
+    # test run decision tree
+    decisionTree = decision_tree_create(x_train, y_train, 7107, params=["entropy", 10, 7, 8])
+    decision_tree_decision(decisionTree, x_test)
+
+
+    # Test run MLP
+    mlp = multilayer_perceptron(x_train, y_train, params=["relu",(48, 16),"adaptive","sgd"])
+    mlp_predict(mlp, x_test)
 
 
 if __name__ == '__main__':

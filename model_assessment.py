@@ -44,82 +44,133 @@ def test_model(model):
             mlp_fine_tuning(ff)
         case 'results':
             print("Showing comparison between models...")
+
+            # create summary graphs of hyperparameter comparison
+            model_results = ['data_exports/dt_gridsearch_rs.csv', 'data_exports/mlp_gridsearch_rs.csv',
+                             'data_exports/knn_gridsearch_rs.csv']
+            dt_rs_df = pd.read_csv(model_results[0])
+            mlp_rs_df = pd.read_csv(model_results[1])
+            knn_rs_df = pd.read_csv(model_results[2])
+
+            # get base model scores on training data
+            base_model_scores = get_base_model_scores(ff)
+            print(base_model_scores)
+
+            # Compare all variations of all model's accuracy
+            for results in model_results:
+                results_df = pd.read_csv(results)
+
+                x_values = results_df['mean_test_score'].to_numpy()
+                y_values = results_df['std_test_score'].to_numpy()
+
+                plt.scatter(x_values, y_values)
+
+            # plot base models
+            base_colours = ["#05f3ff", '#ff050d', '#f0ff21']
+            for i in range(len(base_model_scores)):
+                x_values = base_model_scores[i][0]
+                y_values = base_model_scores[i][1]
+                plt.scatter(x_values, y_values, color=base_colours[i])
+
+            plt.xlabel('Model Mean Accuracy Score')
+            plt.ylabel('Model STD Accuracy Score')
+            plt.title('All DT, MLP & kNN Models Mean Accuracy Comparison')
+            plt.legend(['DT', 'MLP', 'kNN', 'Base DT', 'Base MLP', 'Base kNN'])
+            plt.savefig("graphs/Models_mean_accuracy_comparison.png")
+            plt.show()
+
+            # look at box plots to compare mean, median and std of accuracy scores across multiple configurations
+            # mlp boxplot mean accuracy
+            plt.subplot(1, 3, 1)
+            plt.ylim(85, 100)
+            plt.yticks(np.arange(85, 100, 1))
+            plt.ylabel("Accuracy (%)")
+            plt.xlabel("MLP")
+            plt.title("MLP Accuracy (85-100%)")
+            plt.boxplot(mlp_rs_df['mean_test_score'] * 100, capwidths=0.2)
+            # plt.show()
+
+            # dt boxplot mean accuracy
+            plt.subplot(1, 3, 2)
+            plt.ylim(78, 93)
+            plt.yticks(np.arange(78, 93, 0.75))
+            plt.ylabel("Accuracy (%)")
+            plt.xlabel("DT")
+            plt.title("DT Accuracy (85-93%)")
+            plt.boxplot(dt_rs_df['mean_test_score'] * 100, capwidths=0.2)
+            # plt.show()
+
+            # kNN boxplot mean accuracy
+            plt.subplot(1, 3, 3)
+            plt.ylim(92.5, 95)
+            plt.yticks(np.arange(92.5, 95, 0.25))
+            plt.ylabel("Accuracy (%)")
+            plt.xlabel("kNN")
+            plt.title("kNN Accuracy (90-95%)")
+            plt.boxplot(knn_rs_df['mean_test_score'] * 100, capwidths=0.2)
+
+            plt.tight_layout()
+            plt.savefig("graphs/models_mean_accuracy_bp.png")
+            plt.show()
+
         case _:
             print("Model not available.")
 
-    # create summary graphs of hyperparameter comparison
-    model_results = ['data_exports/dt_gridsearch_rs.csv', 'data_exports/mlp_gridsearch_rs.csv', 'data_exports/knn_gridsearch_rs.csv']
-    # model_results = ['mlp_gridsearch_rs.csv']
 
-    # plot graphs to compare performance of top 50 combinations
-    # x = mean, y = std
-    # colours for each hidden layer size, activation, learning rate etc
-    # can be done by reading the csv file
-    # include default hyperparam settings for baseline comparison
 
-    # look at box plots to compare mean, median and std of accuracy scores across multiple configurations
+def get_base_model_scores(five_fold):
+    """
+        A function used to collect base mlp, dt and knn models'
+        accuracy and std using kfold cross validation - only set
+        parameter is the random states
 
-    # parallel coordinates plot? - https://plotly.com/python/parallel-coordinates-plot/
+        ------
+        inputs:
+            five_fold:
 
-    # Compare all variations of all model's accuracy
-    # ---> WORK OUT HOW TO INCLUDE BASE MODELS IN THIS
-    for results in model_results:
-        results_df = pd.read_csv(results)
-        print(results_df.head())
-        print(results_df.columns)
+        ------
+        returns: n/a
+        """
+    # get training and test datasets
+    training_set, test_set = dataset_split()
 
-        x_values = results_df['mean_test_score'].to_numpy()
-        y_values = results_df['std_test_score'].to_numpy()
+    # split training set into x (landmarks) and y (labels)
+    x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
+    y_train = training_set['Encoded_sign'].to_numpy()
 
-        plt.scatter(x_values, y_values)
+    # create new base mlp
+    mlp = MLPClassifier(random_state=41)
 
-    plt.xlabel('Model Mean Accuracy Score')
-    plt.ylabel('Model STD Accuracy Score')
-    plt.title('All DT, MLP & kNN Models Accuracy Comparison')
-    plt.legend(['DT', 'MLP', 'kNN'])
-    plt.show()
+    # create decision tree
+    dtree = tree.DecisionTreeClassifier(random_state=7107)
 
-    # import seaborn as sns
-    # colours = ["flare", "crest"]
-    # for results in range(len(model_results)):
-    #     results_df = pd.read_csv(model_results[results])
-    #
-    #     sns.scatterplot(
-    #         data=results_df,
-    #         x='mean_test_score',
-    #         y='std_test_score',
-    #         hue='rank_test_score',
-    #         palette=sns.color_palette(colours[results], as_cmap=True)
-    #     )
-    #
-    # plt.title("Test")
-    # plt.show()
+    # train and evaluate mlp using 5-fold cross validation
+    mlp_cv_accuracy_scores = cross_val_score(mlp, x_train, y_train, cv=five_fold)
+    mlp_mean_cv = mlp_cv_accuracy_scores.mean()
+    mlp_std_cv = mlp_cv_accuracy_scores.std()
 
-    # parallel coordinates plot graph
-    import plotly.express as px
+    # evaluated method using 5-fold cv
+    dtree_cv_accuracy_scores = cross_val_score(dtree, x_train, y_train, cv=five_fold)
+    dtree_mean_cv = dtree_cv_accuracy_scores.mean()
+    dtree_std_cv = dtree_cv_accuracy_scores.std()
 
-    # encode non-numeric columns
-    mlp_results = pd.read_csv(model_results[1])
-    mlp_results['param_activation_en'] = mlp_results['param_activation'].astype('category').cat.codes
-    mlp_results['param_hidden_layer_sizes_en'] = mlp_results['param_hidden_layer_sizes'].astype('category').cat.codes
-    mlp_results['param_learning_rate_en'] = mlp_results['param_learning_rate'].astype('category').cat.codes
-    mlp_results['param_solver_en'] = mlp_results['param_solver'].astype('category').cat.codes
-    print(mlp_results[['param_activation', 'param_activation_en']].sample(10).head(10))
-    print(mlp_results[['param_hidden_layer_sizes', 'param_hidden_layer_sizes_en']].sample(10).head(10))
-    print(mlp_results[['param_learning_rate', 'param_learning_rate_en']].sample(10).head(10))
-    print(mlp_results[['param_solver', 'param_solver_en']].sample(10).head(10))
+    # get knn base scores
+    knn_scores = pd.read_csv('data_exports/knn_gridsearch_rs.csv')
+    knn_base = knn_scores.loc[(knn_scores['param_n_neighbors'] == 1) & (knn_scores['param_metric'] == 'E')]
+    knn_base_acc = knn_base['mean_test_score'].iloc[0]
+    knn_base_std = knn_base['std_test_score'].iloc[0]
+    print(knn_base)
 
-    fig = px.parallel_coordinates(mlp_results, color="rank_test_score",
-                                  dimensions=["param_activation_en", "param_hidden_layer_sizes_en",
-                                              "param_learning_rate_en", "param_solver_en", "rank_test_score"],
-                                  labels={"rank_test_score": "ranke",
-                                          "param_activation_en": "activation", "param_hidden_layer_sizes_en": "hidden layer",
-                                          "param_learning_rate_en": "lr", "param_solver_en": "solver"},
-                                  color_continuous_scale=px.colors.diverging.Tealrose,
-                                  color_continuous_midpoint=len(mlp_results) /2
-                                  )
-    fig.show()
+    print(f"knn_Mean accuracy: {knn_base_acc}")
+    print(f"knn_Standard deviation: {knn_base_std}")
 
+    print(f"mlp_Mean accuracy: {mlp_mean_cv}")
+    print(f"mlp_Standard deviation: {mlp_std_cv}")
+
+    print(f"dt_Mean accuracy: {dtree_mean_cv}")
+    print(f"dt_Standard deviation: {dtree_std_cv}")
+
+    return [[dtree_mean_cv, dtree_std_cv], [mlp_mean_cv, mlp_std_cv], [knn_base_acc, knn_base_std]]
 
 def knn_fine_tuning(ff):
     """
@@ -229,8 +280,6 @@ def mlp_fine_tuning(five_fold):
     print(f"Mean CV accuracy: {mean_cv}")
     print(f"Standard deviation: {std_cv}")
 
-    # --> look at using gridsearch https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html
-    # https://drbeane.github.io/python_dsci/pages/grid_search.html
     print(f"MLP Params : {mlp.get_params()}")
 
     param_grid = [{
@@ -240,8 +289,6 @@ def mlp_fine_tuning(five_fold):
         'solver': ['sgd', 'adam'] # default = adam
         # 'alpha': [0.0001, 0.001, 0.005, 0.0005] # default = 0.0001
     }]
-
-    # mlp_gridsearch = GridSearchCV(mlp, param_grid, cv=five_fold, scoring='accuracy', refit=True) #param grid = list of dict of parameter settins to try as values
 
     mlp_gridsearch = GridSearchCV(mlp, param_grid, cv=five_fold, scoring='accuracy', refit=True, n_jobs=-1, verbose=2)
     # n_jobs = -1 : run on all available cores
@@ -280,8 +327,6 @@ def decision_tree_fine_tuning(ff):
         ------
         returns: n/a
         """
-    # https://www.geeksforgeeks.org/machine-learning/building-and-implementing-decision-tree-classifiers-with-scikit-learn-a-comprehensive-guide/
-
     #get appropriate data
     training_set, test_set = dataset_split()
 
@@ -424,16 +469,6 @@ def compare_best_models():
     print(f"MLP F1 score: {mlp_f1 * 100:.2f}%")
     print(f"DT F1 score: {dt_f1 * 100:.2f}%")
 
-    # https://scikit-learn.org/stable/api/sklearn.metrics.html
-    # Metrics to calculate and compare against:
-    # - Accuracy
-    # - Precision
-    # - Recall (sensitivity)
-    # - F1 score
-    # - Confusion Matrix
-    # - ROC Curve?
-    # - Absolute Mean Error?
-
     bar_x_models = ['MLP', 'DT', 'kNN']
 
     # Accuracy comparison
@@ -549,6 +584,17 @@ def add_labels(x,y):
         plt.text(i, y[i], f"{round(y[i], 2)}%", ha='center')
 
 def compare_clustering():
+    """
+        Uses to compare two clustering algorithms' accuracy
+
+        ------
+        inputs:
+            n/a
+
+        ------
+        returns:
+            n/a
+        """
     training_set, test_set = dataset_split()
 
     x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()
@@ -586,32 +632,13 @@ def compare_clustering():
 
 
 def test_harness():
-    print("TO DO IN THIS SCRIPT:"
-          "\n - test each model to fine tune two hyperparameters"
-          "\n - use 5-fold cross validation to do this"
-          "\n - assess each model/test against performance metrics"
-          "\n - then retrain each model with their best performing metrics with the main training set"
-          "\n - compare this to others for classifier performance comparison"
-          "\n - create visuals of performance metrics etc"
-          "\n\n Use this script to test each classifier to work out their best hyperparameters, then use the ones in "
-          "models to create a fine-tuned classifier")
-          # "\n OR"
-          # "\n Adapt model functions to first do 5fold tests, then use .fit to train on actual datasets etc like in labsheet ")
-
-    # next to do:
-    # - kNN hyperparam tests
-    # - create graphs to compare settings
-    # - retrain best models (best kNN, DT and MLP) on on entire training set
-    # - then compare each classifier
-
     # test_model("knn")
     # test_model("mlp")
     # test_model("dt")
-    # test_model("results")
+    test_model("results")
 
     # compare_best_models()
-
-    compare_clustering()
+    # compare_clustering()
 
 if __name__ == '__main__':
     test_harness()

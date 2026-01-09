@@ -205,5 +205,5 @@ def test_harness():
     landmarker.close()
 
 if __name__ == '__main__':
-    # data_extraction()
-    test_harness()
+    data_extraction()
+    # test_harness()
