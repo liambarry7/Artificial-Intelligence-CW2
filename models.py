@@ -12,13 +12,9 @@ Script containing different classification models
 
 from collections import Counter
 import sklearn.tree as tree
-import sklearn.metrics as metrics
 from sklearn.neural_network import MLPClassifier
 import math
-import pandas as pd
-import numpy as np
 
-from data_handling import preprocess
 from data_handling import dataset_split
 
 
@@ -94,13 +90,15 @@ def get_neighbours(dataset, input_vector, k, distance_metric="E"):
     
     #print("Searching for ", k, " nearest neighbours ...")
 
-    #create and populate a list of distances using euclidean function
+    #create and populate a list of distances using specified distance function
     distances = []
-    if distance_metric == "M":
+    if distance_metric == "M":      #manhattan
         for features, handsign in dataset:
+            # for each loop, compare the input to dataset[i]
             dist = manhattan(features, input_vector)
+            # add to list of distances for comparison
             distances.append((dist, handsign))
-    elif distance_metric == "E":
+    elif distance_metric == "E":    #euclidean
         for features, handsign in dataset:
             dist = euclidean(features, input_vector)
             distances.append((dist, handsign))
@@ -139,12 +137,13 @@ def kNN_predict(dataset, input_vector, k, distance_metric="E"):
         The most commonly occuring label amongst nearest neighbours
     """
 
+    # call get_neighbours() helper
     neighbours = get_neighbours(dataset, input_vector, k)
 
-    #create a list of just the labels
+    # create a list of just the labels
     labels = (label for _, label in neighbours)
 
-    #(tuple format to str - label, no. of occurances eg ("A", n) --> take first element of first tuple)
+    # (tuple format - (label, no. of occurances) eg (0, n) --> first element of first tuple is first label)
     most_common_label = Counter(labels).most_common(1)[0][0]
 
     return most_common_label
