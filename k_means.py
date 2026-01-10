@@ -97,12 +97,20 @@ def find_k(data, start, repeats, offset):
     
     for i in range(repeats):
         print(i)
-        cluster = k_mean(data, start + i*offset)
-        k.append(i + i*offset)
+        
+        cluster = KMeans(n_clusters=start + i*offset).fit(data)
+        
+        predictions = cluster.predict(data)
+    
+        centroids = cluster.cluster_centers_ 
+        
+        k.append(start + i*offset)
         loss.append(cluster.inertia_)
     
     
     plt.figure()
+    plt.xlabel("K value")
+    plt.ylabel("Objective Function")
     plt.plot(k, loss)
 
 def kmeans_accuracy(guess, answer):
@@ -123,7 +131,7 @@ def tester():
     x_train = training_set.drop(['Encoded_sign'], axis=1).to_numpy()  # axis = 0  -> operate along rows, axis = 1  -> operate along columns
     y_train = training_set['Encoded_sign'].to_numpy()
     
-    mean = k_mean(x_train, y_train, 150)
+    mean = k_mean(x_train, y_train, 100)
     
     item = test_set.drop(['Encoded_sign'], axis=1).to_numpy()
     answers = test_set['Encoded_sign'].to_numpy()
@@ -140,8 +148,8 @@ def tester():
     
     print(kmeans_accuracy(values, answers))
     
-    #find_k(x_train, 10, 50, 20)
-    #found 150 to be optimum
+    find_k(x_train, 10, 100, 5)
+    #found 100 to be optimum
     
 if __name__ == '__main__':
     tester()
