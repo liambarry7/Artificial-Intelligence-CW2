@@ -50,8 +50,8 @@ def preprocess():
     plt.title("ASL Sign Distribution Before Preprocessing")
     plt.ylabel("No of signs")
     plt.xlabel("ASL Signs")
-    plt.show()
     plt.savefig("graphs/dataset_before_preprocessing.png")
+    plt.show()
     # visualise("bar", signX, signY)
 
     # drop duplicates - removes duplicated rows based on all columns
@@ -122,9 +122,8 @@ def preprocess():
     plt.title("ASL Sign Distribution After Preprocessing")
     plt.ylabel("No of signs")
     plt.xlabel("ASL Signs")
-    plt.show()
     plt.savefig("graphs/dataset_after_preprocessing.png")
-
+    plt.show()
 
     clean_df = hand_df_std.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign'], axis=1)
     print(clean_df.sample(10).head())
