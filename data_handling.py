@@ -38,11 +38,20 @@ def preprocess():
     hand_count = df.groupby('Category_name').size().reset_index(name="count")
     hand_countX = hand_count['Category_name'].to_numpy()
     hand_countY = hand_count['count'].to_numpy()
-    # visualise("bar", hand_countX, hand_countY)
+    visualise("bar", hand_countX, hand_countY)
 
     sign_count = df.groupby('Hand_sign').size().reset_index(name="count")
     signX = sign_count['Hand_sign'].to_numpy()
     signY = sign_count['count'].to_numpy()
+    x = np.array(signX)
+    y = np.array(signY)
+    plt.bar(x, y)
+    plt.ylim(250, 500)
+    plt.title("ASL Sign Distribution Before Preprocessing")
+    plt.ylabel("No of signs")
+    plt.xlabel("ASL Signs")
+    plt.show()
+    plt.savefig("graphs/dataset_before_preprocessing.png")
     # visualise("bar", signX, signY)
 
     # drop duplicates - removes duplicated rows based on all columns
@@ -103,8 +112,24 @@ def preprocess():
     hand_df_std = hand_df_standardised[~hand_df_standardised.HandID.isin(outlier_handID)]
     print(hand_df_std)
 
+    sign_count = hand_df_std.groupby('Hand_sign').size().reset_index(name="count")
+    signX = sign_count['Hand_sign'].to_numpy()
+    signY = sign_count['count'].to_numpy()
+    x = np.array(signX)
+    y = np.array(signY)
+    plt.bar(x, y)
+    plt.ylim(250, 500)
+    plt.title("ASL Sign Distribution After Preprocessing")
+    plt.ylabel("No of signs")
+    plt.xlabel("ASL Signs")
+    plt.show()
+    plt.savefig("graphs/dataset_after_preprocessing.png")
+
+
     clean_df = hand_df_std.drop(['HandID', 'Score', 'Hand_class', 'Hand_sign'], axis=1)
     print(clean_df.sample(10).head())
+
+
     clean_df.to_csv('data_exports/hands_cleaned_df_example.csv', mode='w', index=False)
     return clean_df
 
@@ -154,7 +179,7 @@ def visualise(chart_type, x, y):
 
 def test_harness():
     preprocess()
-    dataset_split()
+    # dataset_split()
 
 if __name__ == '__main__':
     test_harness()
