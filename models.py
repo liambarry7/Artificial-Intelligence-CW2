@@ -5,25 +5,18 @@ Coursework 002 for: CMP-6058A Artificial Intelligence
 
 Script containing different classification models
 
-@author: 100385358, 100428904, 10042689
+@author: 100385358, 100428904, 100426089
 @date:   19/12/2025
 
 """
 
 from collections import Counter
 import sklearn.tree as tree
-import sklearn.metrics as metrics
 from sklearn.neural_network import MLPClassifier
 import math
-import pandas as pd
-import numpy as np
-
-from data_handling import preprocess
 from data_handling import dataset_split
 
 
-#Chris
-#kNN start
 def euclidean(A, B):
     """
     Simple Euclidean distance function

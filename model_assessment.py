@@ -9,13 +9,15 @@ Script containing the analysis of different classification models
 @date:   05/01/2026
 
 """
+import numpy as np
 import pandas as pd
+from sklearn import metrics
 
 from data_handling import dataset_split
 from models import *
 from k_means import k_mean, find_k_means, kmeans_accuracy
 from hierarchical_clustering import agglomerative_clustering
-from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score, GridSearchCV
+from sklearn.model_selection import StratifiedKFold, cross_val_score, GridSearchCV
 from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 
